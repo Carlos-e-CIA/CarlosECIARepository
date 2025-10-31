@@ -1,4 +1,4 @@
-package com.projetofef.carlosecia.enums;
+package com.projetofef.carlosecia.domains.enums;
 
 public enum StatusFatura {
     ABERTA(0, "ABERTA"), FECHADA(1, "FECHADA"), PAGA(2, "PAGA");
