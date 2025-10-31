@@ -2,6 +2,7 @@ package com.projetofef.carlosecia.domains.enums;
 
 public enum StatusLancamento {
     PENDENTE(0, "PENDENTE"), BAIXADO(1, "BAIXADO"), PARCIAL(2, "PARCIAL"), CANCELADO(3, "CANCELADO");
+
     private Integer id;
     private String descricao;
 

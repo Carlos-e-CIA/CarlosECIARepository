@@ -1,12 +1,12 @@
 package com.projetofef.carlosecia.domains.enums;
 
-public enum tipoTransacao {
+public enum TipoTransacao {
     CREDITO(0,"CREDITO"), DEBITO(1, "DEBITO"), TRANSACAO(2, "TRANSACAO");
 
     private Integer id;
     private String descricao;
 
-    tipoTransacao(Integer id, String descricao) {
+    TipoTransacao(Integer id, String descricao) {
         this.id = id;
         this.descricao = descricao;
     }
@@ -27,14 +27,14 @@ public enum tipoTransacao {
         this.descricao = descricao;
     }
 
-    public static tipoTransacao toEnum(String descricao) {
+    public static TipoTransacao toEnum(String descricao) {
         if(descricao == null) return null;
-        for(tipoTransacao tipoTransacao : tipoTransacao.values()) {
+        for(TipoTransacao tipoTransacao : TipoTransacao.values()) {
             if(descricao.equals(tipoTransacao.getDescricao())){
                 return tipoTransacao;
             }
         }
-        throw new IllegalArgumentException("Transação Inválida!");
+        throw new IllegalArgumentException("TipoTransacao Inválida!");
     }
 }
 
