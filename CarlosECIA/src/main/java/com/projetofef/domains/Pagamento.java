@@ -42,24 +42,24 @@ public class Pagamento {
     private String observacao;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "conta_origem_id", nullable = false)
+    @JoinColumn(name = "contaBancariaId", nullable = false)
     @JsonBackReference
     private ContaBancaria contaOrigem;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "lancamento_id", nullable = false)
+    @JoinColumn(name = "lancamentoId", nullable = false)
     @JsonBackReference
     private Lancamento lancamento;
 
     public Pagamento() {
     }
 
-    public Pagamento(Integer id, LocalDate dataPagamento, BigDecimal valorPago, String observacao, ContaBancaria contaBancaria, Lancamento lancamento) {
+    public Pagamento(Integer id, LocalDate dataPagamento, BigDecimal valorPago, String observacao, ContaBancaria contaOrigem, Lancamento lancamento) {
         this.id = id;
         this.dataPagamento = dataPagamento;
         this.valorPago = valorPago;
         this.observacao = observacao;
-        this.contaBancaria = contaBancaria;
+        this.contaOrigem = contaOrigem;
         this.lancamento = lancamento;
     }
 
@@ -96,11 +96,11 @@ public class Pagamento {
     }
 
     public ContaBancaria getContaBancaria() {
-        return contaBancaria;
+        return contaOrigem;
     }
 
-    public void setContaBancaria(ContaBancaria contaBancaria) {
-        this.contaBancaria = contaBancaria;
+    public void setContaBancaria(ContaBancaria contaOrigem) {
+        this.contaOrigem = contaOrigem;
     }
 
     public Lancamento getLancamento() {
