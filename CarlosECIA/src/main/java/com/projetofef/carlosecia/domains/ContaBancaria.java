@@ -20,7 +20,6 @@ import java.util.Objects;
         sequenceName = "seq_contaBancaria",
         allocationSize = 1
 )
-
 public class ContaBancaria {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_contaBancaria")
