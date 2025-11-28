@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -50,15 +49,11 @@ public class CentroCusto {
     @OrderBy("id ASC")
     private List<Lancamento> lancamentos = new ArrayList<>();
 
-    public CentroCusto() {
-        this.ativo = 1;
-    }
-
     public CentroCusto(Integer id, String nome, String codigo, Integer ativo, Usuario usuario) {
         this.id = id;
         this.nome = nome;
         this.codigo = codigo;
-        this.ativo = ativo != null ? ativo : 1;
+        this.ativo = ativo;
         this.usuario = usuario;
     }
 
