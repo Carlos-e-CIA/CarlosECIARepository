@@ -16,17 +16,17 @@ public final class CentroCustoMapper {
 
     private CentroCustoMapper() {}
 
-    public static CentroCustoDTO toDto(CentroCusto e) {
-        if (e == null) return null;
+    public static CentroCustoDTO toDto(CentroCusto ce) {
+        if (ce == null) return null;
 
         Integer idDto = e.getId();
         Integer usuarioId = (e.getUsuario() == null) ? null : e.getUsuario().getId();
 
         return new CentroCustoDTO(
                 idDto,
-                e.getNome(),
-                e.getCodigo(),
-                e.getAtivo(),
+                ce.getNome(),
+                ce.getCodigo(),
+                ce.getAtivo(),
                 usuarioId
         );
     }
@@ -47,15 +47,15 @@ public final class CentroCustoMapper {
     public static CentroCusto toEntity(CentroCustoDTO dto, Usuario usuario) {
         if (dto == null) return null;
 
-        CentroCusto e = new CentroCusto();
+        CentroCusto ce = new CentroCusto();
 
-        e.setId(dto.getId());
-        e.setNome(trim(dto.getNome()));
-        e.setCodigo(trim(dto.getCodigo()));
-        e.setAtivo(dto.getAtivo());
-        e.setUsuario(usuario);
+        ce.setId(dto.getId());
+        ce.setNome(trim(dto.getNome()));
+        ce.setCodigo(trim(dto.getCodigo()));
+        ce.setAtivo(dto.getAtivo());
+        ce.setUsuario(usuario);
 
-        return e;
+        return ce;
     }
 
     public static CentroCusto toEntity(CentroCustoDTO dto, Function<Integer, Usuario> usuarioResolver) {
