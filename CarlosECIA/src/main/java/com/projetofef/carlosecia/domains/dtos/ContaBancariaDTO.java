@@ -32,14 +32,14 @@ public class ContaBancariaDTO {
     private BigDecimal saldoInicial;
 
     @NotBlank(message = "Ativa é obrigatória")
-    private String ativa;
+    private char ativa;
 
     @NotNull(message = "Usuário é obrigatório")
     private Integer usuarioId;
 
     public ContaBancariaDTO() {}
 
-    public ContaBancariaDTO(Integer id, String instituicao, String agencia, Integer numero, String apelido, BigDecimal saldoInicial, String ativa, Integer usuarioId) {
+    public ContaBancariaDTO(Integer id, String instituicao, String agencia, Integer numero, String apelido, BigDecimal saldoInicial, char ativa, Integer usuarioId) {
         this.id = id;
         this.instituicao = instituicao;
         this.agencia = agencia;
@@ -102,7 +102,7 @@ public class ContaBancariaDTO {
         return ativa;
     }
 
-    public void setAtiva(String ativa) {
+    public void setAtiva(char ativa) {
         this.ativa = ativa;
     }
 
