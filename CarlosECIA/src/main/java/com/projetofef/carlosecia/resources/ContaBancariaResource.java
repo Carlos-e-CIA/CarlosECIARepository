@@ -40,7 +40,7 @@ public class ContaBancariaResource {
 
     @GetMapping("/all")
     public ResponseEntity<List<ContaBancariaDTO>> listAll(
-            @RequestParam(required = false) Integer usuarioId {
+            @RequestParam(required = false) Integer usuarioId) {
 
         List<ContaBancariaDTO> body;
 
