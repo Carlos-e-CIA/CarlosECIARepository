@@ -1,7 +1,7 @@
-package com.projetofef.carlosecia.resources;
+package com.projetofef.resources;
 
-import com.projetofef.carlosecia.domains.dtos.ContaBancariaDTO;
-import com.projetofef.carlosecia.services.ContaBancariaService;
+import com.projetofef.domains.dtos.ContaBancariaDTO;
+import com.projetofef.services.ContaBancariaService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;

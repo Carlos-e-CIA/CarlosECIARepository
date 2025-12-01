@@ -1,4 +1,4 @@
-package com.projetofef.carlosecia.domains.dtos;
+package com.projetofef.domains.dtos;
 
 import jakarta.validation.constraints.*;
 

@@ -1,4 +1,4 @@
-package com.projetofef.carlosecia.domains.enums;
+package com.projetofef.domains.enums;
 
 public enum MeioPagamento {
     CONTA(0, "CONTA"), CARTAO(1, "CARTAO"), DINHEIRO(2, "DINHEIRO"), PIX(3, "PIX");
@@ -27,10 +27,10 @@ public enum MeioPagamento {
         this.descricao = descricao;
     }
 
-    public static MeioPagamento toEnum(String descricao) {
-        if(descricao == null) return null;
+    public static MeioPagamento toEnum(Integer id) {
+        if(id == null) return null;
         for (MeioPagamento meioPagamento : MeioPagamento.values()) {
-            if (descricao.equals(meioPagamento.getDescricao())) {
+            if (id.equals(meioPagamento.getId())) {
                 return meioPagamento;
             }
         }

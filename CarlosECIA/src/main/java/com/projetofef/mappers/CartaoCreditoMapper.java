@@ -1,7 +1,7 @@
-package com.projetofef.carlosecia.mappers;
+package com.projetofef.mappers;
 
-import com.projetofef.carlosecia.domains.CartaoCredito;
-import com.projetofef.carlosecia.domains.dtos.CartaoCreditoDTO;
+import com.projetofef.domains.CartaoCredito;
+import com.projetofef.domains.dtos.CartaoCreditoDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import java.util.Collection;

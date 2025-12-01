@@ -1,7 +1,7 @@
-package com.projetofef.carlosecia.resources;
+package com.projetofef.resources;
 
-import com.projetofef.carlosecia.domains.dtos.CentroCustoDTO;
-import com.projetofef.carlosecia.services.CentroCustoService;
+import com.projetofef.domains.dtos.CentroCustoDTO;
+import com.projetofef.services.CentroCustoService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;

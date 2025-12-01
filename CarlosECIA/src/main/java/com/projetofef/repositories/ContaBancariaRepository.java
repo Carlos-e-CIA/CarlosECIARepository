@@ -1,6 +1,6 @@
-package com.projetofef.carlosecia.repositories;
+package com.projetofef.repositories;
 
-import com.projetofef.carlosecia.domains.ContaBancaria;
+import com.projetofef.domains.ContaBancaria;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,7 +1,7 @@
-package com.projetofef.carlosecia.resources;
+package com.projetofef.resources;
 
-import com.projetofef.carlosecia.domains.dtos.CartaoCreditoDTO;
-import com.projetofef.carlosecia.services.CartaoCreditoService;
+import com.projetofef.domains.dtos.CartaoCreditoDTO;
+import com.projetofef.services.CartaoCreditoService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;

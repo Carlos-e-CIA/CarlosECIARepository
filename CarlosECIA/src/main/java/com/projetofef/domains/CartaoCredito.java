@@ -1,4 +1,4 @@
-package com.projetofef.carlosecia.domains;
+package com.projetofef.domains;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -63,6 +63,9 @@ public class CartaoCredito {
     )
     @OrderBy("descricao ASC")
     private List<Lancamento> lancamentos = new ArrayList<>();
+
+    public CartaoCredito() {
+    }
 
     public CartaoCredito(Integer id, String bandeira, String emissor, String apelido, LocalDate fechamentoFaturaDia, LocalDate vencimentoFaturaDia, char ativo) {
         this.id = id;

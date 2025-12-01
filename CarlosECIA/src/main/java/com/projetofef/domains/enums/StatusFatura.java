@@ -1,4 +1,4 @@
-package com.projetofef.carlosecia.domains.enums;
+package com.projetofef.domains.enums;
 
 public enum StatusFatura {
     ABERTA(0, "ABERTA"), FECHADA(1, "FECHADA"), PAGA(2, "PAGA");
@@ -19,10 +19,10 @@ public enum StatusFatura {
 
     public void setDescricao(String descricao){this.descricao = descricao;}
 
-    public static StatusFatura toEnum(String descricao) {
-        if (descricao == null) return null;
+    public static StatusFatura toEnum(Integer id) {
+        if (id == null) return null;
         for(StatusFatura statusFatura : StatusFatura.values()) {
-            if (descricao.equals(statusFatura.getDescricao())) {
+            if (id.equals(statusFatura.getId())) {
                 return statusFatura;
             }
         }

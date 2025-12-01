@@ -1,15 +1,15 @@
-package com.projetofef.carlosecia.services;
+package com.projetofef.services;
 
-import com.projetofef.carlosecia.domains.Usuario;
-import com.projetofef.carlosecia.domains.ContaBancaria;
-import com.projetofef.carlosecia.domains.dtos.ContaBancariaDTO;
-import com.projetofef.carlosecia.mappers.ContaBancariaMapper;
-import com.projetofef.carlosecia.repositories.MovimentoContaRepository;
-import com.projetofef.carlosecia.repositories.LancamentoRepository;
-import com.projetofef.carlosecia.repositories.PagamentoRepository;
-import com.projetofef.carlosecia.repositories.RecebimentoRepository;
-import com.projetofef.carlosecia.repositories.ContaBancariaRepository;
-import com.projetofef.carlosecia.repositories.UsuarioRepository;
+import com.projetofef.domains.Usuario;
+import com.projetofef.domains.ContaBancaria;
+import com.projetofef.domains.dtos.ContaBancariaDTO;
+import com.projetofef.mappers.ContaBancariaMapper;
+import com.projetofef.repositories.MovimentoContaRepository;
+import com.projetofef.repositories.LancamentoRepository;
+import com.projetofef.repositories.PagamentoRepository;
+import com.projetofef.repositories.RecebimentoRepository;
+import com.projetofef.repositories.ContaBancariaRepository;
+import com.projetofef.repositories.UsuarioRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,7 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-import com.projetofef.carlosecia.services.exceptions.ObjectNotFoundException;
+import com.projetofef.services.exceptions.ObjectNotFoundException;
 import java.util.List;
 
 @Service

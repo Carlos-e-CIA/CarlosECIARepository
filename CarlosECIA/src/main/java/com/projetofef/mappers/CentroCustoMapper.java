@@ -1,8 +1,8 @@
-package com.projetofef.carlosecia.mappers;
+package com.projetofef.mappers;
 
-import com.projetofef.carlosecia.domains.CentroCusto;
-import com.projetofef.carlosecia.domains.Usuario;
-import com.projetofef.carlosecia.domains.dtos.CentroCustoDTO;
+import com.projetofef.domains.CentroCusto;
+import com.projetofef.domains.Usuario;
+import com.projetofef.domains.dtos.CentroCustoDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 

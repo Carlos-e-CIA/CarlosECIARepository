@@ -1,8 +1,8 @@
-package com.projetofef.carlosecia.mappers;
+package com.projetofef.mappers;
 
-import com.projetofef.carlosecia.domains.Usuario;
-import com.projetofef.carlosecia.domains.ContaBancaria;
-import com.projetofef.carlosecia.domains.dtos.ContaBancariaDTO;
+import com.projetofef.domains.Usuario;
+import com.projetofef.domains.ContaBancaria;
+import com.projetofef.domains.dtos.ContaBancariaDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import java.util.Collection;

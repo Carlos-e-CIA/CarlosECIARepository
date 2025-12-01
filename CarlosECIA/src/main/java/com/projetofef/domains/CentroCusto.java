@@ -1,4 +1,4 @@
-package com.projetofef.carlosecia.domains;
+package com.projetofef.domains;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -48,6 +48,9 @@ public class CentroCusto {
     )
     @OrderBy("id ASC")
     private List<Lancamento> lancamentos = new ArrayList<>();
+
+    public CentroCusto() {
+    }
 
     public CentroCusto(Integer id, String nome, String codigo, Integer ativo, Usuario usuario) {
         this.id = id;

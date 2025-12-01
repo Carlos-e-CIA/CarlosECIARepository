@@ -1,4 +1,4 @@
-package com.projetofef.carlosecia.domains;
+package com.projetofef.domains;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -97,6 +97,9 @@ public class ContaBancaria {
     )
     @OrderBy("observacao ASC")
     private List<Recebimento> recebimentos = new ArrayList<>();
+
+    public ContaBancaria() {
+    }
 
     public ContaBancaria(Integer id, String instituicao, String agencia, Integer numero, String apelido, BigDecimal saldoInicial, LocalDate dataSaldoInicial, char ativa, Usuario usuario) {
         this.id = id;

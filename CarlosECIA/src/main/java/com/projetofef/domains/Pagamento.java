@@ -1,14 +1,13 @@
-package com.projetofef.carlosecia.domains;
+package com.projetofef.domains;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.projetofef.carlosecia.domains.enums.MeioPagamento;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-
+import com.projetofef.domains.ContaBancaria;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;

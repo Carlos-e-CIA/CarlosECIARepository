@@ -1,6 +1,6 @@
-package com.projetofef.carlosecia.repositories;
+package com.projetofef.repositories;
 
-import com.projetofef.carlosecia.domains.CartaoCredito;
+import com.projetofef.domains.CartaoCredito;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
