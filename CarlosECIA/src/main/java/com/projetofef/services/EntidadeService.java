@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-@
+
 @Service
 static class EntidadeService {
     private static final int MAX_PAGE_SIZE = 200;
