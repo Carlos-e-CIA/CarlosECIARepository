@@ -1,4 +1,4 @@
-package com.projetofef.carlosecia.domains.enums;
+package com.projetofef.domains.enums;
 
 public enum TipoLancamento {
     PAGAR(0, "CONTA"), RECEBER(1, "CARTAO");
@@ -27,10 +27,10 @@ public enum TipoLancamento {
         this.descricao = descricao;
     }
 
-    public static TipoLancamento toEnum(String descricao) {
-        if(descricao == null) return null;
+    public static TipoLancamento toEnum(Integer id) {
+        if(id == null) return null;
         for (TipoLancamento tipoLancamento : TipoLancamento.values()) {
-            if (descricao.equals(tipoLancamento.getDescricao())) {
+            if (id.equals(tipoLancamento.getId())) {
                 return tipoLancamento;
             }
         }

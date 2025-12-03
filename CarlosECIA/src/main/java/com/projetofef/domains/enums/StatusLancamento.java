@@ -1,4 +1,4 @@
-package com.projetofef.carlosecia.domains.enums;
+package com.projetofef.domains.enums;
 
 public enum StatusLancamento {
     PENDENTE(0, "PENDENTE"), BAIXADO(1, "BAIXADO"), PARCIAL(2, "PARCIAL"), CANCELADO(3, "CANCELADO");
@@ -27,10 +27,10 @@ public enum StatusLancamento {
         this.descricao = descricao;
     }
 
-    public static StatusLancamento toEnum(String descricao) {
-        if(descricao == null) return null;
+    public static StatusLancamento toEnum(Integer id) {
+        if(id == null) return null;
         for (StatusLancamento statusLancamento : StatusLancamento.values()) {
-            if (descricao.equals(statusLancamento.getDescricao())) {
+            if (id.equals(statusLancamento.getId())) {
                 return statusLancamento;
             }
         }

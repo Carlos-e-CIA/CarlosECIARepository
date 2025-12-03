@@ -1,6 +1,7 @@
-package com.projetofef.carlosecia.domains.dtos;
+package com.projetofef.domains.dtos;
 
 import jakarta.validation.constraints.*;
+import com.projetofef.domains.ContaBancaria;
 
 import java.math.BigDecimal;
 
@@ -24,17 +25,17 @@ public class PagamentoDTO {
     private String observacao;
 
     @NotNull(message = "Id da conta origem é obrigatório")
-    private ContaBancaria contaOrigem;
+    private Integer contaOrigem;
 
     @NotNull(message = "Id do lançamento é obrigatório")
-    private Lancamento lancamento;
+    private Integer lancamentoId;
 
-    public PagamentoDTO(Integer id, BigDecimal valorPago, String observacao, ContaBancaria contaOrigem, Lancamento lancamento) {
+    public PagamentoDTO(Integer id, BigDecimal valorPago, String observacao, Integer contaOrigem, Integer lancamentoId) {
         this.id = id;
         this.valorPago = valorPago;
         this.observacao = observacao;
         this.contaOrigem = contaOrigem;
-        this.lancamento = lancamento;
+        this.lancamentoId = lancamentoId;
     }
 
     public Integer getId() {
@@ -61,19 +62,19 @@ public class PagamentoDTO {
         this.observacao = observacao;
     }
 
-    public ContaBancaria getContaOrigem() {
+    public Integer getContaOrigem() {
         return contaOrigem;
     }
 
-    public void setContaOrigem(ContaBancaria contaOrigem) {
+    public void setContaOrigem(Integer contaOrigem) {
         this.contaOrigem = contaOrigem;
     }
 
-    public Lancamento getLancamento() {
-        return lancamento;
+    public Integer getLancamentoId() {
+        return lancamentoId;
     }
 
-    public void setLancamento(Lancamento lancamento) {
-        this.lancamento = lancamento;
+    public void setLancamentoId(Integer lancamentoId) {
+        this.lancamentoId = lancamentoId;
     }
 }

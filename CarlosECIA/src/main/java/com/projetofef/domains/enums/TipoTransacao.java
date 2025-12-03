@@ -1,4 +1,4 @@
-package com.projetofef.carlosecia.domains.enums;
+package com.projetofef.domains.enums;
 
 public enum TipoTransacao {
     CREDITO(0,"CREDITO"), DEBITO(1, "DEBITO"), TRANSACAO(2, "TRANSACAO");
@@ -27,10 +27,10 @@ public enum TipoTransacao {
         this.descricao = descricao;
     }
 
-    public static TipoTransacao toEnum(String descricao) {
-        if(descricao == null) return null;
+    public static TipoTransacao toEnum(Integer id) {
+        if(id == null) return null;
         for(TipoTransacao tipoTransacao : TipoTransacao.values()) {
-            if(descricao.equals(tipoTransacao.getDescricao())){
+            if(id.equals(tipoTransacao.getId())){
                 return tipoTransacao;
             }
         }
