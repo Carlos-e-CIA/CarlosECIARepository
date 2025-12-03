@@ -1,10 +1,11 @@
-package com.projetofef.carlosecia.mappers;
+package com.projetofef.mappers;
 
-import com.projetofef.carlosecia.domains.Pagamento;
-import com.projetofef.carlosecia.domains.dtos.PagamentoDTO;
+import com.projetofef.domains.Pagamento;
+import com.projetofef.domains.dtos.PagamentoDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
+import com.projetofef.domains.ContaBancaria;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
