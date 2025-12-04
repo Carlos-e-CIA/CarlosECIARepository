@@ -13,7 +13,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
-public class EntidadeMapper {
+public final class EntidadeMapper {
     private EntidadeMapper() {}
 
     public static EntidadeDTO toDto(Entidade e) {

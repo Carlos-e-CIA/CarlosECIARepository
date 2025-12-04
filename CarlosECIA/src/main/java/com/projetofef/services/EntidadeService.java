@@ -1,4 +1,5 @@
 package com.projetofef.services;
+
 import com.projetofef.repositories.EntidadeRepository;
 import com.projetofef.repositories.UsuarioRepository;
 import com.projetofef.domains.Entidade;
@@ -6,7 +7,6 @@ import com.projetofef.domains.Usuario;
 import com.projetofef.domains.dtos.EntidadeDTO;
 import com.projetofef.mappers.EntidadeMapper;
 import com.projetofef.services.exceptions.ObjectNotFoundException;
-
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
