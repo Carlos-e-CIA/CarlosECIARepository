@@ -50,6 +50,9 @@ public class MovimentoConta {
     @Column(name = "tipoTransacao", nullable = false)
     private TipoTransacao tipoTransacao;
 
+    public MovimentoConta() {
+    }
+
     public MovimentoConta(Integer id, LocalDate dataLeitura, String tipo, BigDecimal valor, String historico, ContaBancaria contaBancaria, TipoTransacao tipoTransacao) {
         this.id = id;
         this.dataLeitura = dataLeitura;
