@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class UsuarioMapper {
+public final class UsuarioMapper {
     private UsuarioMapper() {}
 
     public static UsuarioDTO toDto(Usuario u) {
