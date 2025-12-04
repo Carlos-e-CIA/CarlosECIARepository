@@ -28,14 +28,14 @@ public class PagamentoDTO {
     private Integer contaOrigem;
 
     @NotNull(message = "Id do lançamento é obrigatório")
-    private Integer lancamentoId;
+    private Integer lancamento;
 
-    public PagamentoDTO(Integer id, BigDecimal valorPago, String observacao, Integer contaOrigem, Integer lancamentoId) {
+    public PagamentoDTO(Integer id, BigDecimal valorPago, String observacao, Integer contaOrigem, Integer lancamento) {
         this.id = id;
         this.valorPago = valorPago;
         this.observacao = observacao;
         this.contaOrigem = contaOrigem;
-        this.lancamentoId = lancamentoId;
+        this.lancamento = lancamento;
     }
 
     public Integer getId() {
@@ -70,11 +70,11 @@ public class PagamentoDTO {
         this.contaOrigem = contaOrigem;
     }
 
-    public Integer getLancamentoId() {
-        return lancamentoId;
+    public Integer getLancamento() {
+        return lancamento;
     }
 
-    public void setLancamentoId(Integer lancamentoId) {
-        this.lancamentoId = lancamentoId;
+    public void setLancamento(Integer lancamentoId) {
+        this.lancamento = lancamentoId;
     }
 }

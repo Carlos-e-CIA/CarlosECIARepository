@@ -1,5 +1,6 @@
 package com.projetofef.domains.dtos;
 
+import com.projetofef.domains.Usuario;
 import jakarta.validation.constraints.*;
 
 public class EntidadeDTO {

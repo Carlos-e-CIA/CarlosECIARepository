@@ -1,5 +1,6 @@
 package com.projetofef.mappers;
 
+import com.projetofef.domains.Lancamento;
 import com.projetofef.domains.Pagamento;
 import com.projetofef.domains.dtos.PagamentoDTO;
 import org.springframework.data.domain.Page;
@@ -61,7 +62,7 @@ public class PagamentoMapper {
         if(dto == null) return null;
         ContaBancaria contaOrigem = (dto.getContaOrigem() == null) ? null : contaOrigemResolver.apply(dto.getContaOrigem());
         Lancamento lancamento = (dto.getLancamento() == null) ? null : lancamentoResolver.apply(dto.getLancamento());
-        return toEntity(dto, ContaBancaria, Lancamento);
+        return toEntity(dto, contaOrigem, lancamento);
     }
 
     public static void copyToEntity(PagamentoDTO dto, Pagamento target, ContaBancaria contaOrigem, Lancamento lancamento) {

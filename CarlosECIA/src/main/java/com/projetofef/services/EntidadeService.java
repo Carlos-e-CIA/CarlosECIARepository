@@ -18,7 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @Service
-static class EntidadeService {
+public class EntidadeService {
     private static final int MAX_PAGE_SIZE = 200;
 
     private final EntidadeRepository entidadeRepo;

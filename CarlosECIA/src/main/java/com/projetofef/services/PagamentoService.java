@@ -1,5 +1,7 @@
 package com.projetofef.services;
 
+import com.projetofef.domains.Lancamento;
+import com.projetofef.repositories.LancamentoRepository;
 import com.projetofef.repositories.PagamentoRepository;
 import com.projetofef.services.exceptions.ObjectNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -166,17 +168,17 @@ public class PagamentoService {
         }
 
         Integer contaOrigemId = pagamentoDTO.getContaOrigem();
-        Integer lancamentoId = pagamentoDTO.getLancamentoId();
+        Integer lancamentoId = pagamentoDTO.getLancamento();
 
         if (contaOrigemId == null || lancamentoId == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A conta origem e o Lancamento são obrigatórios");
         }
 
         ContaBancaria contaOrigem = contaOrigemRepo.findById(contaOrigemId)
-                .orElseThrow(() -> new ObjectNotFoundException("Conta Bancaria não encontrado: id=" + contaOrigem));
+                .orElseThrow(() -> new ObjectNotFoundException("Conta Bancaria não encontrado: id=" + contaOrigemId));
 
         Lancamento lancamento = lancamentoRepo.findById(lancamentoId)
-                .orElseThrow(() -> new ObjectNotFoundException("Lancamento não encontrada: id=" + lancamento));
+                .orElseThrow(() -> new ObjectNotFoundException("Lancamento não encontrada: id=" + lancamentoId));
 
         pagamentoDTO.setId(null);
         Pagamento pagamento;
@@ -204,19 +206,19 @@ public class PagamentoService {
                         new ObjectNotFoundException("Pagamento não encontrado: id=" + id));
 
         Integer contaOrigem = pagamentoDTO.getContaOrigem();
-        Integer lancamento = pagamentoDTO.getLancamentoId();
+        Integer lancamento = pagamentoDTO.getLancamento();
 
         if (contaOrigem == null || lancamento == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A conta bancaria e o Lancamento são obrigatórios");
         }
 
-        ContaBancaria contaOrigem = contaOrigemRepo.findById(contaOrigem)
+        ContaBancaria contaOrigem1 = contaOrigemRepo.findById(contaOrigem)
                 .orElseThrow(() -> new ObjectNotFoundException("Conta bancaria não encontrado: id=" + contaOrigem));
 
-        Lancamento lancamento = lancamentoRepo.findById(lancamento)
+        Lancamento lancamento1 = lancamentoRepo.findById(lancamento)
                 .orElseThrow(() -> new ObjectNotFoundException("Lancamento não encontrada: id=" + lancamento));
 
-        PagamentoMapper.copyToEntity(pagamentoDTO, pagamento, contaOrigem, lancamento);
+        PagamentoMapper.copyToEntity(pagamentoDTO, pagamento, contaOrigem1, lancamento1);
 
         return PagamentoMapper.toDto(pagamentoRepo.save(pagamento));
     }
