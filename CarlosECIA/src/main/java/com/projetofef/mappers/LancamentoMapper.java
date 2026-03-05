@@ -1,48 +1,51 @@
 package com.projetofef.mappers;
 
-import com.projetofef.domains.*;
+import com.projetofef.domains.ContaBancaria;
+import com.projetofef.domains.Usuario;
+import com.projetofef.domains.Entidade;
+import com.projetofef.domains.CentroCusto;
+import com.projetofef.domains.CartaoCredito;
+import com.projetofef.domains.Lancamento;
 import com.projetofef.domains.dtos.LancamentoDTO;
-import com.projetofef.domains.enums.MeioPagamento;
-import com.projetofef.domains.enums.StatusLancamento;
 import com.projetofef.domains.enums.TipoLancamento;
+import com.projetofef.domains.enums.StatusLancamento;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class LancamentoMapper {
+public final class LancamentoMapper {
     private  LancamentoMapper() {}
 
-    public static LancamentoDTO toDto(Lancamento l) {
-        if(l == null) return null;
+    public static LancamentoDTO toDto(Lancamento e) {
+        if(e == null) return null;
 
-        Integer idDto = l.getId();
-        Integer usuario = (l.getUsuario() == null) ? null : l.getUsuario().getId();
-        Integer entidade = (l.getEntidade() == null) ? null : l.getEntidade().getId();
-        Integer centroCusto = (l.getCentroCusto() == null) ? null : l.getCentroCusto().getId();
-        Integer contaBancaria = (l.getContaBancaria() == null) ? null : l.getContaBancaria().getId();
-        Integer cartaoCredito = (l.getCartaoCredito() == null) ? null : l.getCartaoCredito().getId();
-        int meioPagamento = l.getMeioPagamento().getId();
-        int tipoLancamento = l.getTipoLancamento().getId();
-        int statusLancamento = l.getStatusLancamento().getId();
+        Integer idDto = e.getId();
+        Integer contaBancariaId = (e.getContaBancaria() == null) ? null : e.getContaBancaria().getId();
+        Integer usuarioId = (e.getUsuario() == null) ? null : e.getUsuario().getId();
+        Integer entidadeId = (e.getEntidade() == null) ? null : e.getEntidade().getId();
+        Integer centroCustoId = (e.getCentroCusto() == null) ? null : e.getCentroCusto().getId();
+        Integer cartaoCreditoId = (e.getCartaoCredito() == null) ? null : e.getCartaoCredito().getId();
+        int tipoLancamentoInt = e.getTipoLancamento().getId();
+        int statusLancamentoInt = e.getStatusLancamento().getId();
 
         return new LancamentoDTO(
                 idDto,
-                l.getDescricao(),
-                l.getValor(),
-                meioPagamento,
-                l.getValorBaixado(),
-                usuario,
-                entidade,
-                centroCusto,
-                contaBancaria,
-                cartaoCredito,
-                tipoLancamento,
-                statusLancamento
+                e.getTipo(),
+                e.getDescricao(),
+                e.getValor(),
+                e.getMeioPagamento(),
+                e.getValorBaixado(),
+                contaBancariaId,
+                usuarioId,
+                entidadeId,
+                centroCustoId,
+                cartaoCreditoId,
+                tipoLancamentoInt,
+                statusLancamentoInt
         );
     }
 
@@ -59,61 +62,65 @@ public class LancamentoMapper {
         return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
     }
 
-    public static Lancamento toEntity(LancamentoDTO dto, Usuario usuario, Entidade entidade, CentroCusto centroCusto, ContaBancaria contaBancaria, CartaoCredito cartaoCredito) {
+    public static Lancamento toEntity(LancamentoDTO dto, ContaBancaria contaBancaria, Usuario usuario, Entidade entidade, CentroCusto centroCusto, CartaoCredito cartaoCredito) {
         if(dto == null) return null;
 
-        Lancamento l = new Lancamento();
+        Lancamento e = new Lancamento();
 
-        l.setId(dto.getId());
-        l.setDescricao(trim(dto.getDescricao()));
-        l.setValor(dto.getValor());
-        l.setMeioPagamento(MeioPagamento.toEnum(dto.getMeioPagamento()));
-        l.setValorBaixado(dto.getValorBaixado());
-        l.setUsuario(usuario);
-        l.setEntidade(entidade);
-        l.setCentroCusto(centroCusto);
-        l.setContaBancaria(contaBancaria);
-        l.setCartaoCredito(cartaoCredito);
-        l.setTipoLancamento(TipoLancamento.toEnum(dto.getTipoLancamento()));
-        l.setStatusLancamento(StatusLancamento.toEnum(dto.getStatusLancamento()));
+        e.setId(dto.getId());
+        e.setTipo(trim(dto.getTipo()));
+        e.setDescricao(trim(dto.getDescricao()));
+        e.setValor(dto.getValor());
+        e.setMeioPagamento(trim(dto.getMeioPagamento()));
+        e.setValorBaixado(dto.getValorBaixado());
+        e.setContaBancaria(contaBancaria);
+        e.setUsuario(usuario);
+        e.setEntidade(entidade);
+        e.setCentroCusto(centroCusto);
+        e.setCartaoCredito(cartaoCredito);
+        e.setTipoLancamento(TipoLancamento.toEnum(dto.getTipoLancamento()));
+        e.setStatusLancamento(StatusLancamento.toEnum(dto.getStatusLancamento()));
 
-        return l;
+        return e;
     }
 
-    public static Lancamento toEntity(LancamentoDTO dto, Function<Integer, Usuario> usuarioResolver, Function<Integer, Entidade> entidadeResolver, Function<Integer, CentroCusto> centroCustoResolver, Function<Integer, ContaBancaria> contaBancariaResolver, Function<Integer, CartaoCredito> cartaoCreditoResolver) {
+    public static Lancamento toEntity(LancamentoDTO dto, Function<Integer, ContaBancaria> contaBancariaResolver, Function<Integer, Usuario> usuarioResolver, Function<Integer, Entidade> entidadeResolver, Function<Integer, CentroCusto> centroCustoResolver, Function<Integer, CartaoCredito> cartaoCreditoResolver) {
         if(dto == null) return null;
-        Usuario usuario = (dto.getUsuario() == null) ? null : usuarioResolver.apply(dto.getUsuario());
-        Entidade entidade = (dto.getEntidade() == null) ? null : entidadeResolver.apply(dto.getEntidade());
-        CentroCusto centroCusto = (dto.getCentroCusto() == null) ? null : centroCustoResolver.apply(dto.getCentroCusto());
-        ContaBancaria contaBancaria = (dto.getContaBancaria() == null) ? null : contaBancariaResolver.apply(dto.getContaBancaria());
-        CartaoCredito cartaoCredito = (dto.getCartaoCredito() == null) ? null : cartaoCreditoResolver.apply(dto.getCartaoCredito());
-        return toEntity(dto, usuario, entidade, centroCusto, contaBancaria, cartaoCredito);
+        ContaBancaria contaBancaria = (dto.getContaBancariaId() == null) ? null : contaBancariaResolver.apply(dto.getContaBancariaId());
+        Usuario usuario = (dto.getUsuarioId() == null) ? null : usuarioResolver.apply(dto.getUsuarioId());
+        Entidade entidade = (dto.getEntidadeId() == null) ? null : entidadeResolver.apply(dto.getEntidadeId());
+        CentroCusto centroCusto = (dto.getCentroCustoId() == null) ? null : centroCustoResolver.apply(dto.getCentroCustoId());
+        CartaoCredito cartaoCredito = (dto.getCartaoCreditoId() == null) ? null : cartaoCreditoResolver.apply(dto.getCartaoCreditoId());
+
+        return toEntity(dto, contaBancaria, usuario, entidade, centroCusto, cartaoCredito);
     }
 
-    public static void copyToEntity(LancamentoDTO dto, Lancamento target, Usuario usuario, Entidade entidade, CentroCusto centroCusto, ContaBancaria contaBancaria, CartaoCredito cartaoCredito) {
+    public static void copyToEntity(LancamentoDTO dto, Lancamento target, ContaBancaria contaBancaria, Usuario usuario, Entidade entidade, CentroCusto centroCusto, CartaoCredito cartaoCredito) {
         if(dto == null || target == null) return;
 
+        target.setId(dto.getId());
+        target.setTipo(trim(dto.getTipo()));
         target.setDescricao(trim(dto.getDescricao()));
         target.setValor(dto.getValor());
-        target.setMeioPagamento(MeioPagamento.toEnum(dto.getMeioPagamento()));
+        target.setMeioPagamento(trim(dto.getMeioPagamento()));
         target.setValorBaixado(dto.getValorBaixado());
+        target.setContaBancaria(contaBancaria);
         target.setUsuario(usuario);
         target.setEntidade(entidade);
         target.setCentroCusto(centroCusto);
-        target.setContaBancaria(contaBancaria);
         target.setCartaoCredito(cartaoCredito);
         target.setTipoLancamento(TipoLancamento.toEnum(dto.getTipoLancamento()));
         target.setStatusLancamento(StatusLancamento.toEnum(dto.getStatusLancamento()));
     }
 
-    public static void copyToEntity (LancamentoDTO dto, Lancamento target, Function<Integer, Usuario> usuarioResolver, Function<Integer, Entidade> entidadeResolver, Function<Integer, CentroCusto> centroCustoResolver, Function<Integer, ContaBancaria> contaBancariaResolver, Function<Integer, CartaoCredito> cartaoCreditoResolver) {
+    public static void copyToEntity(LancamentoDTO dto, Lancamento target, Function<Integer, ContaBancaria> contaBancariaResolver, Function<Integer, Usuario> usuarioResolver, Function<Integer, Entidade> entidadeResolver, Function<Integer, CentroCusto> centroCustoResolver, Function<Integer, CartaoCredito> cartaoCreditoResolver) {
         if(dto == null || target == null) return;
-        Usuario usuario = (dto.getUsuario() == null) ? null : usuarioResolver.apply(dto.getUsuario());
-        Entidade entidade = (dto.getEntidade() == null) ? null : entidadeResolver.apply(dto.getEntidade());
-        CentroCusto centroCusto = (dto.getCentroCusto() == null) ? null : centroCustoResolver.apply(dto.getCentroCusto());
-        ContaBancaria contaBancaria = (dto.getContaBancaria() == null) ? null : contaBancariaResolver.apply(dto.getContaBancaria());
-        CartaoCredito cartaoCredito = (dto.getCartaoCredito() == null) ? null : cartaoCreditoResolver.apply(dto.getCartaoCredito());
-        copyToEntity(dto, target, usuario, entidade, centroCusto, contaBancaria, cartaoCredito);
+        ContaBancaria contaBancaria = (dto.getContaBancariaId() == null) ? null : contaBancariaResolver.apply(dto.getContaBancariaId());
+        Usuario usuario = (dto.getUsuarioId() == null) ? null : usuarioResolver.apply(dto.getUsuarioId());
+        Entidade entidade = (dto.getEntidadeId() == null) ? null : entidadeResolver.apply(dto.getEntidadeId());
+        CentroCusto centroCusto = (dto.getCentroCustoId() == null) ? null : centroCustoResolver.apply(dto.getCentroCustoId());
+        CartaoCredito cartaoCredito = (dto.getCartaoCreditoId() == null) ? null : cartaoCreditoResolver.apply(dto.getCartaoCreditoId());
+        copyToEntity(dto, target, contaBancaria, usuario, entidade, centroCusto, cartaoCredito);
     }
 
     private static String trim(String s) {

@@ -10,10 +10,9 @@ import java.util.Optional;
 
 @Repository
 public interface RecebimentoRepository extends JpaRepository<Recebimento, Integer> {
-    Page<Recebimento> findByLancamentoId(Integer lancamentoId, Pageable pageable);
-    Page<Recebimento> findByContaBancariaId(Integer contaBancariaId, Pageable pageable);
-    Page<Recebimento> findByLancamentoIdAndContaBancariaId(Integer lancamentoId, Integer contaDestinoId, Pageable pageable);
-    Optional<Recebimento> findByObservacao(String observacao);
+    Page<Recebimento> findByLancamento_Id(Integer lancamentoId, Pageable pageable);
+    Page<Recebimento> findByContaBancaria_Id(Integer contaBancariaId, Pageable pageable);
+    Page<Recebimento> findByLancamento_IdAndContaBancaria_Id(Integer lancamentoId, Integer contaBancariaId, Pageable pageable);
     boolean existsByLancamento_Id(Integer lancamentoId);
     boolean existsByContaBancaria_Id(Integer contaBancariaId);
 }

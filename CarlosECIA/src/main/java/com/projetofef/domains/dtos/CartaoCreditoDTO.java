@@ -6,33 +6,38 @@ public class CartaoCreditoDTO {
     public interface Create {}
     public interface Update {}
 
-    @Null(groups = ContaBancariaDTO.Create.class, message = "Id deve ser omitido na criação")
-    @NotNull(groups = ContaBancariaDTO.Update.class, message = "Id é obrigatório na atualização")
+    @Null(groups = Create.class, message = "Id deve ser omitido na criação")
+    @NotNull(groups = Update.class, message = "Id é obrigatório na atualização")
     private Integer id;
 
     @NotBlank(message = "Bandeira é obrigatória")
-    @Size(max = 30, message = "Bandeira deve ter, no máximo, 60 caracteres")
+    @Size(max = 50, message = "Bandeira deve ter, no máximo, 50 caracteres")
     private String bandeira;
 
     @NotBlank(message = "Emissor é obrigatório")
-    @Size(max = 60, message = "Emissor deve ter, no máximo, 60 caracteres")
+    @Size(max = 120, message = "Emissor deve ter, no máximo, 120 caracteres")
     private String emissor;
 
     @NotBlank(message = "Apelido é obrigatório")
-    @Size(max = 60, message = "Apelido deve ter, no máximo, 60 caracteres")
+    @Size(max = 120, message = "Apelido deve ter, no máximo, 120 caracteres")
     private String apelido;
 
-    @NotBlank(message = "Ativo é obrigatório")
-    private char ativo;
+    @NotNull(message = "Ativo é obrigatório")
+    private Character ativo;
 
-    public CartaoCreditoDTO() {}
+    @NotNull(message = "Usuario é obrigatório")
+    private Integer usuarioId;
 
-    public CartaoCreditoDTO(Integer id, String bandeira, String emissor, String apelido, char ativo) {
+    public CartaoCreditoDTO() {
+    }
+
+    public CartaoCreditoDTO(Integer id, String bandeira, String emissor, String apelido, Character ativo, Integer usuarioId) {
         this.id = id;
         this.bandeira = bandeira;
         this.emissor = emissor;
         this.apelido = apelido;
         this.ativo = ativo;
+        this.usuarioId = usuarioId;
     }
 
     public Integer getId() {
@@ -67,11 +72,19 @@ public class CartaoCreditoDTO {
         this.apelido = apelido;
     }
 
-    public String getAtivo() {
+    public Character getAtivo() {
         return ativo;
     }
 
-    public void setAtivo(char ativo) {
+    public void setAtivo(Character ativo) {
         this.ativo = ativo;
+    }
+
+    public Integer getUsuarioId() {
+        return usuarioId;
+    }
+
+    public void setUsuarioId(Integer usuarioId) {
+        this.usuarioId = usuarioId;
     }
 }

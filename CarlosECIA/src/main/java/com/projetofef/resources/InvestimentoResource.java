@@ -1,7 +1,7 @@
 package com.projetofef.resources;
 
-import com.projetofef.domains.dtos.CentroCustoDTO;
-import com.projetofef.services.CentroCustoService;
+import com.projetofef.domains.dtos.InvestimentoDTO;
+import com.projetofef.services.InvestimentoService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -14,23 +14,23 @@ import java.net.URI;
 
 @Validated
 @RestController
-@RequestMapping("/api/centroCusto")
-public class CentroCustoResource {
-    private final CentroCustoService service;
+@RequestMapping("/api/investimento")
+public class InvestimentoResource {
+    private final InvestimentoService service;
 
-    public CentroCustoResource(CentroCustoService service) {
+    public InvestimentoResource(InvestimentoService service) {
         this.service = service;
     }
 
     @GetMapping
-    public ResponseEntity<Page<CentroCustoDTO>> list(
-            @RequestParam(required = false) Integer usuarioId,
-            @PageableDefault(size = 20, sort = "nome") Pageable pageable) {
+    public ResponseEntity<Page<InvestimentoDTO>> list(
+            @RequestParam(required = false) Integer contaBancariaId,
+            @PageableDefault(size = 20, sort = "codigo") Pageable pageable) {
 
-        Page<CentroCustoDTO> page;
+        Page<InvestimentoDTO> page;
 
-        if (usuarioId != null) {
-            page = service.findAllByUsuario(usuarioId, pageable);
+        if (contaBancariaId != null) {
+            page = service.findAllByContaBancaria(contaBancariaId, pageable);
         } else {
             page = service.findAll(pageable);
         }
@@ -39,13 +39,13 @@ public class CentroCustoResource {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<CentroCustoDTO>> listAll(
-            @RequestParam(required = false) Integer usuarioId) {
+    public ResponseEntity<List<InvestimentoDTO>> listAll(
+            @RequestParam(required = false) Integer contaBancariaId) {
 
-        List<CentroCustoDTO> body;
+        List<InvestimentoDTO> body;
 
-        if (usuarioId != null) {
-            body = service.findAllByUsuario(usuarioId);
+        if (contaBancariaId != null) {
+            body = service.findAllByContaBancaria(contaBancariaId);
         } else {
             body = service.findAll();
         }
@@ -54,14 +54,14 @@ public class CentroCustoResource {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CentroCustoDTO> findById(@PathVariable Integer id) {
-        CentroCustoDTO dto = service.findById(id);
+    public ResponseEntity<InvestimentoDTO> findById(@PathVariable Integer id) {
+        InvestimentoDTO dto = service.findById(id);
         return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/codigo/{codigo}")
-    public ResponseEntity<CentroCustoDTO> findByCodigo(@PathVariable String codigo) {
-        CentroCustoDTO dto = service.findByCodigo(codigo);
+    public ResponseEntity<InvestimentoDTO> findByCodigo(@PathVariable String codigo) {
+        InvestimentoDTO dto = service.findByCodigo(codigo);
         return ResponseEntity.ok(dto);
     }
 
@@ -72,17 +72,17 @@ public class CentroCustoResource {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CentroCustoDTO> update(
+    public ResponseEntity<InvestimentoDTO> update(
             @PathVariable Integer id,
-            @RequestBody @Validated(CentroCustoDTO.Update.class) CentroCustoDTO dto) {
+            @RequestBody @Validated(InvestimentoDTO.Update.class) InvestimentoDTO dto) {
         dto.setId(id);
         return ResponseEntity.ok(service.update(id, dto));
     }
 
     @PostMapping
-    public ResponseEntity<CentroCustoDTO> create(
-            @RequestBody @Validated(CentroCustoDTO.Create.class) CentroCustoDTO dto) {
-        CentroCustoDTO created = service.create(dto);
+    public ResponseEntity<InvestimentoDTO> create(
+            @RequestBody @Validated(InvestimentoDTO.Create.class) InvestimentoDTO dto) {
+        InvestimentoDTO created = service.create(dto);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(created.getId())

@@ -17,7 +17,7 @@ public class TransferenciaDTO {
     private LocalDate data;
 
     @NotNull(message = "Valor da transferência é obrigatório")
-    @Digits(integer = 12, fraction = 2, message = "Valor deve ter no máximo 12 dígitos inteiros e 2 decimais")
+    @Digits(integer = 15, fraction = 2, message = "Valor deve ter no máximo 15 dígitos inteiros e 2 decimais")
     @PositiveOrZero(message = "Valor não pode ser negativo")
     private BigDecimal valor;
 

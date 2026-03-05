@@ -1,67 +1,64 @@
 package com.projetofef.domains;
 
+import com.projetofef.domains.enums.StatusFatura;
+import com.projetofef.infra.StatusFaturaConverter;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.projetofef.domains.enums.StatusFatura;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Digits;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
-
 @Entity
 @Table
 @SequenceGenerator(
-        name = "seq_faturacartao",
-        sequenceName = "seq_faturacartao",
+        name = "seq_faturaCartao",
+        sequenceName = "seq_faturaCartao",
         allocationSize = 1
 )
 public class FaturaCartao {
-
     @Id
-    @GeneratedValue(generator = "seq_faturacartao")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_faturaCartao")
     private Integer id;
 
-    @NotBlank
-    @Column(nullable = false, length = 100)
-    private String competencia;
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    @Column(nullable = false)
+    private LocalDate competencia = LocalDate.now();
 
     @JsonFormat(pattern = "dd/MM/yyyy")
     @Column(nullable = false)
-    private LocalDate dataFechamento;
+    private LocalDate dataFechamento = LocalDate.now();
 
     @JsonFormat(pattern = "dd/MM/yyyy")
     @Column(nullable = false)
-    private LocalDate dataVencimento;
+    private LocalDate dataVencimento = LocalDate.now();
 
     @NotNull
-    @Digits(integer = 15, fraction = 3)
-    @Column(precision = 18, scale = 3, nullable = false)
+    @Digits(integer = 15, fraction = 2)
+    @Column(precision = 17, scale = 2, nullable = false)
     private BigDecimal valorTotal;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "cartaoCreditoId", nullable = false)
+    @JoinColumn(name = "idCartaoCredito", nullable = false)
     @JsonBackReference
     private CartaoCredito cartaoCredito;
 
-    @Convert(converter = StatusFatura.class)
+    @Convert(converter = StatusFaturaConverter.class)
     @Column(name = "statusFatura", nullable = false)
     private StatusFatura statusFatura;
 
     public FaturaCartao() {
+        this.valorTotal = BigDecimal.ZERO;
     }
 
-    public FaturaCartao(Integer id, String competencia, LocalDate dataFechamento, LocalDate dataVencimento, BigDecimal valorTotal, CartaoCredito cartaoCredito, StatusFatura statusFatura) {
+    public FaturaCartao(Integer id, LocalDate competencia, LocalDate dataFechamento, LocalDate dataVencimento, BigDecimal valorTotal, CartaoCredito cartaoCredito, StatusFatura statusFatura) {
         this.id = id;
         this.competencia = competencia;
         this.dataFechamento = dataFechamento;
         this.dataVencimento = dataVencimento;
-        this.valorTotal = valorTotal;
+        this.valorTotal = valorTotal != null ? valorTotal : BigDecimal.ZERO;
         this.cartaoCredito = cartaoCredito;
         this.statusFatura = statusFatura;
     }
@@ -74,11 +71,11 @@ public class FaturaCartao {
         this.id = id;
     }
 
-    public String getCompetencia() {
+    public LocalDate getCompetencia() {
         return competencia;
     }
 
-    public void setCompetencia(String competencia) {
+    public void setCompetencia(LocalDate competencia) {
         this.competencia = competencia;
     }
 
@@ -124,7 +121,8 @@ public class FaturaCartao {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof FaturaCartao that)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
+        FaturaCartao that = (FaturaCartao) o;
         return Objects.equals(id, that.id);
     }
 

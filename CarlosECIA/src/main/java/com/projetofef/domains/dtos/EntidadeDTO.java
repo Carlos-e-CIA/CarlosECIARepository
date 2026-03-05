@@ -1,53 +1,78 @@
 package com.projetofef.domains.dtos;
 
-import com.projetofef.domains.Usuario;
 import jakarta.validation.constraints.*;
 
 public class EntidadeDTO {
-    public interface Create{}
-    public interface Update{}
+    public interface Create {}
+    public interface Update {}
 
     @Null(groups = Create.class, message = "Id deve ser omitido na criação")
     @NotNull(groups = Update.class, message = "Id é obrigatório na atualização")
     private Integer id;
 
-    @NotNull(message = "Usuário é obrigatório")
-    private Usuario usuarioId;
-
-    @NotBlank(message = "O nome da entidade é obrigatório")
-    @Size(max = 100, message = "O nome deve ter no máximo 100 caracteres")
+    @NotBlank(message = "Nome é obrigatório")
+    @Size(max = 120, message = "Nome deve ter, no máximo, 120 caracteres")
     private String nome;
 
-    @NotBlank(message = "O documento é obrigatório")
-    @Size(max = 20, message = "O documento deve ter no máximo 20 caracteres")
+    @NotBlank(message = "Documento é obrigatório")
+    @Size(max = 14, message = "Documento deve ter, no máximo, 14 caracteres")
     private String documento;
 
-    @NotBlank(message = "O tipo é obrigatório")
-    @Size(max = 50, message = "O tipo deve ter no máximo 50 caracteres")
+    @NotBlank(message = "Tipo é obrigatório")
+    @Size(max = 120, message = "Tipo deve ter, no máximo, 120 caracteres")
     private String tipo;
 
-    public EntidadeDTO(Integer id, Usuario usuarioId, String nome, String documento, String tipo) {
+    @NotNull(message = "Usuario é obragtório")
+    private Integer usuarioId;
+
+    public EntidadeDTO() {
+    }
+
+    public EntidadeDTO(Integer id, String nome, String documento, String tipo, Integer usuarioId) {
         this.id = id;
-        this.usuario = usuarioId;
         this.nome = nome;
         this.documento = documento;
         this.tipo = tipo;
+        this.usuarioId = usuarioId;
     }
 
-    public Integer getId() {return id;}
-    public void setId(Integer id) {this.id = id;}
+    public Integer getId() {
+        return id;
+    }
 
-    public Usuario getUsuarioId() {return usuarioId;}
-    public void setUsuarioId(Usuario usuarioId) {this.usuarioId = usuarioId;}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-    public String getNome() {return nome;}
-    public void setNome(String nome) {this.nome = nome;}
+    public String getNome() {
+        return nome;
+    }
 
-    public String getDocumento() {return documento;}
-    public void setDocumento(String documento) {this.documento = documento;}
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
 
+    public String getDocumento() {
+        return documento;
+    }
 
-    public String getTipo() {return tipo;}
-    public void setTipo(String tipo) {this.tipo = tipo;}
+    public void setDocumento(String documento) {
+        this.documento = documento;
+    }
 
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public Integer getUsuarioId() {
+        return usuarioId;
+    }
+
+    public void setUsuarioId(Integer usuarioId) {
+        this.usuarioId = usuarioId;
+    }
 }

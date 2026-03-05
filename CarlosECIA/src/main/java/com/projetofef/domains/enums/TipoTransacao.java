@@ -1,7 +1,7 @@
 package com.projetofef.domains.enums;
 
 public enum TipoTransacao {
-    CREDITO(0,"CREDITO"), DEBITO(1, "DEBITO"), TRANSACAO(2, "TRANSACAO");
+    CREDITO(0, "CREDITO"), DEBITO(1, "DEBITO"), TRANSFERENCIA(2, "TRANSFERENCIA");
 
     private Integer id;
     private String descricao;
@@ -28,14 +28,12 @@ public enum TipoTransacao {
     }
 
     public static TipoTransacao toEnum(Integer id) {
-        if(id == null) return null;
-        for(TipoTransacao tipoTransacao : TipoTransacao.values()) {
-            if(id.equals(tipoTransacao.getId())){
+        if (id == null) return null;
+        for (TipoTransacao tipoTransacao : TipoTransacao.values()) {
+            if (id.equals(tipoTransacao.getId())) {
                 return tipoTransacao;
             }
         }
-        throw new IllegalArgumentException("TipoTransacao Inválida!");
+        throw new IllegalArgumentException("TipoTransacao inválido!");
     }
 }
-
-

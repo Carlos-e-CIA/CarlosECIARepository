@@ -1,12 +1,13 @@
 package com.projetofef.services;
 
-import com.projetofef.domains.CentroCusto;
 import com.projetofef.domains.Usuario;
+import com.projetofef.domains.CentroCusto;
 import com.projetofef.domains.dtos.CentroCustoDTO;
 import com.projetofef.mappers.CentroCustoMapper;
+import com.projetofef.repositories.LancamentoRepository;
 import com.projetofef.repositories.CentroCustoRepository;
 import com.projetofef.repositories.UsuarioRepository;
-import com.projetofef.services.exceptions.ObjectNotFoundException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,20 +15,22 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import com.projetofef.services.exceptions.ObjectNotFoundException;
 
 import java.util.List;
 
 @Service
 public class CentroCustoService {
-
     private static final int MAX_PAGE_SIZE = 200;
 
     private final CentroCustoRepository centroCustoRepo;
     private final UsuarioRepository usuarioRepo;
+    private final LancamentoRepository lancamentoRepo;
 
-    public CentroCustoService(CentroCustoRepository centroCustoRepo, UsuarioRepository usuarioRepo) {
+    public CentroCustoService(CentroCustoRepository centroCustoRepo, UsuarioRepository usuarioRepo, LancamentoRepository lancamentoRepo) {
         this.centroCustoRepo = centroCustoRepo;
         this.usuarioRepo = usuarioRepo;
+        this.lancamentoRepo = lancamentoRepo;
     }
 
     @Transactional(readOnly = true)
@@ -40,7 +43,8 @@ public class CentroCustoService {
         final Pageable effective;
         if (pageable == null || pageable.isUnpaged()) {
             effective = Pageable.unpaged();
-        } else {
+        }
+        else {
             effective = PageRequest.of(
                     Math.max(0, pageable.getPageNumber()),
                     Math.min(pageable.getPageSize(), MAX_PAGE_SIZE),
@@ -59,13 +63,14 @@ public class CentroCustoService {
         }
 
         if (!usuarioRepo.existsById(usuarioId)) {
-            throw new ObjectNotFoundException("Usuário id " + usuarioId + " não encontrado");
+            throw new ObjectNotFoundException("Usuario id " + usuarioId + "não encontrado");
         }
 
         final Pageable effective;
         if (pageable == null || pageable.isUnpaged()) {
             effective = Pageable.unpaged();
-        } else {
+        }
+        else {
             effective = PageRequest.of(
                     Math.max(0, pageable.getPageNumber()),
                     Math.min(pageable.getPageSize(), MAX_PAGE_SIZE),
@@ -91,55 +96,72 @@ public class CentroCustoService {
         return centroCustoRepo.findById(id)
                 .map(CentroCustoMapper::toDto)
                 .orElseThrow(() ->
-                        new ObjectNotFoundException("Centro de Custo não encontrado: id=" + id));
+                        new ObjectNotFoundException("CentroCusto não encontrado: id = " + id));
+    }
+
+    @Transactional(readOnly = true)
+    public CentroCustoDTO findByCodigo(String codigo) {
+        if (codigo == null || codigo.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Codigo do CentroCusto é obrigatório");
+        }
+
+        String normalizedCodigo = codigo.trim();
+
+        return centroCustoRepo.findByCodigo(normalizedCodigo)
+                .map(CentroCustoMapper::toDto)
+                .orElseThrow(() ->
+                        new ObjectNotFoundException("CentroCusto não encontrada: Codigo = " + normalizedCodigo));
     }
 
     @Transactional
-    public CentroCustoDTO create(CentroCustoDTO dto) {
-        if (dto == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Dados do Centro de Custo são obrigatórios");
+    public CentroCustoDTO create(CentroCustoDTO centroCustoDTO) {
+
+        if (centroCustoDTO == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Dados do grupo são obrigatórios");
         }
 
-        Integer usuarioId = dto.getUsuarioId();
+        Integer usuarioId = centroCustoDTO.getUsuarioId();
 
         if (usuarioId == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário é obrigatório");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O Usuario é obrigatório");
         }
 
         Usuario usuario = usuarioRepo.findById(usuarioId)
-                .orElseThrow(() -> new ObjectNotFoundException("Usuário não encontrado: id=" + usuarioId));
+                .orElseThrow(() -> new ObjectNotFoundException("Usuario não encontrado: id = " + usuarioId));
 
-        dto.setId(null);
-        CentroCusto entity = CentroCustoMapper.toEntity(dto, usuario);
+        centroCustoDTO.setId(null);
+        CentroCusto centroCusto;
+        try{
+            centroCusto = CentroCustoMapper.toEntity(centroCustoDTO, usuario);
+        } catch (IllegalArgumentException ex){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+        }
 
-        return CentroCustoMapper.toDto(centroCustoRepo.save(entity));
+        return CentroCustoMapper.toDto(centroCustoRepo.save(centroCusto));
     }
 
     @Transactional
-    public CentroCustoDTO update(Integer id, CentroCustoDTO dto) {
+    public CentroCustoDTO update(Integer id, CentroCustoDTO centroCustoDTO) {
         if (id == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Id é obrigatório");
         }
 
-        if (dto == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Dados do Centro de Custo são obrigatórios");
+        if (centroCustoDTO == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Dados do centroCusto são obrigatórios");
         }
 
-        CentroCusto entity = centroCustoRepo.findById(id)
+        CentroCusto centroCusto = centroCustoRepo.findById(id)
                 .orElseThrow(() ->
-                        new ObjectNotFoundException("Centro de Custo não encontrado: id=" + id));
+                        new ObjectNotFoundException("CentroCusto não encontrada: id = " + id));
 
-        Integer usuarioId = dto.getUsuarioId();
-        if (usuarioId == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário é obrigatório");
-        }
+        Integer usuarioId = centroCustoDTO.getUsuarioId();
 
         Usuario usuario = usuarioRepo.findById(usuarioId)
-                .orElseThrow(() -> new ObjectNotFoundException("Usuário não encontrado: id=" + usuarioId));
+                .orElseThrow(() -> new ObjectNotFoundException("Usuario não encontrado: id = " + usuarioId));
 
-        CentroCustoMapper.copyToEntity(dto, entity, usuario);
+        CentroCustoMapper.copyToEntity(centroCustoDTO, centroCusto, usuario);
 
-        return CentroCustoMapper.toDto(centroCustoRepo.save(entity));
+        return CentroCustoMapper.toDto(centroCustoRepo.save(centroCusto));
     }
 
     @Transactional
@@ -148,10 +170,16 @@ public class CentroCustoService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Id é obrigatório");
         }
 
-        CentroCusto entity = centroCustoRepo.findById(id)
+        CentroCusto centroCusto = centroCustoRepo.findById(id)
                 .orElseThrow(() ->
-                        new ObjectNotFoundException("Centro de Custo não encontrado: id=" + id));
+                        new ObjectNotFoundException("CentroCusto não encontrada: id = " + id));
 
-        centroCustoRepo.delete(entity);
+        if (lancamentoRepo.existsByCentroCusto_Id(id)) {
+            throw new DataIntegrityViolationException(
+                    "CentroCusto possui Lancamentos associados e não pode ser removida: id = " + id
+            );
+        }
+
+        centroCustoRepo.delete(centroCusto);
     }
 }

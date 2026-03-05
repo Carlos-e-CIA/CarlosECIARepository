@@ -1,41 +1,45 @@
 package com.projetofef.domains.dtos;
 
 import jakarta.validation.constraints.*;
-import com.projetofef.domains.ContaBancaria;
 
 import java.math.BigDecimal;
 
 public class PagamentoDTO {
-
     public interface Create {}
     public interface Update {}
 
-    @Null(groups = Create.class, message = "Id deve ser omitido na criação")
-    @NotNull(groups = Update.class, message = "Id é obrigatório na atualização")
+    @Null(groups = PagamentoDTO.Create.class, message = "Id deve ser omitido na criação")
+    @NotNull(groups = PagamentoDTO.Update.class, message = "Id é obrigatório na atualização")
     private Integer id;
 
-    @NotNull(message = "Valor pago é obrigatório")
-    @Digits(integer = 12, fraction = 2)
-    @Positive(message = "O valor do pagamento deve ser maior que zero")
-    @PositiveOrZero(message = "Valor da Compra não pode ser negativo")
+    @NotNull(message = "ValorPago é obrigatório")
+    @Digits(integer = 15, fraction = 2, message = "ValorPago deve ter, no máximo, 15 casas inteiras e 2 decimais")
+    @PositiveOrZero(message = "ValorPago não pode ser negativo")
     private BigDecimal valorPago;
 
-    @NotBlank(message = "A observação é obrigatória")
-    @Size(max = 100)
+    @Size(max = 14, message = "Observacao deve ter, no máximo, 120 caracteres")
     private String observacao;
 
-    @NotNull(message = "Id da conta origem é obrigatório")
-    private Integer contaOrigem;
+    @NotNull(message = "Lancamento é obrigatório")
+    private Integer lancamentoId;
 
-    @NotNull(message = "Id do lançamento é obrigatório")
-    private Integer lancamento;
+    @NotNull(message = "ContaBancaria é obrigatório")
+    private Integer contaBancariaId;
 
-    public PagamentoDTO(Integer id, BigDecimal valorPago, String observacao, Integer contaOrigem, Integer lancamento) {
+    @Min(value = 0, message = "MeioPagamento inválido: use 0 (CONTA), 1 (CARTAO), 2 (DINHEIRO), 3 (PIX)")
+    @Max(value = 3, message = "MeioPagamento inválido: use 0 (CONTA), 1 (CARTAO), 2 (DINHEIRO), 3 (PIX)")
+    private int MeioPagamento;
+
+    public PagamentoDTO() {
+    }
+
+    public PagamentoDTO(Integer id, BigDecimal valorPago, String observacao, Integer lancamentoId, Integer contaBancariaId, int meioPagamento) {
         this.id = id;
         this.valorPago = valorPago;
         this.observacao = observacao;
-        this.contaOrigem = contaOrigem;
-        this.lancamento = lancamento;
+        this.lancamentoId = lancamentoId;
+        this.contaBancariaId = contaBancariaId;
+        MeioPagamento = meioPagamento;
     }
 
     public Integer getId() {
@@ -62,19 +66,27 @@ public class PagamentoDTO {
         this.observacao = observacao;
     }
 
-    public Integer getContaOrigem() {
-        return contaOrigem;
+    public Integer getLancamentoId() {
+        return lancamentoId;
     }
 
-    public void setContaOrigem(Integer contaOrigem) {
-        this.contaOrigem = contaOrigem;
+    public void setLancamentoId(Integer lancamentoId) {
+        this.lancamentoId = lancamentoId;
     }
 
-    public Integer getLancamento() {
-        return lancamento;
+    public Integer getContaBancariaId() {
+        return contaBancariaId;
     }
 
-    public void setLancamento(Integer lancamentoId) {
-        this.lancamento = lancamentoId;
+    public void setContaBancariaId(Integer contaBancariaId) {
+        this.contaBancariaId = contaBancariaId;
+    }
+
+    public int getMeioPagamento() {
+        return MeioPagamento;
+    }
+
+    public void setMeioPagamento(int meioPagamento) {
+        MeioPagamento = meioPagamento;
     }
 }

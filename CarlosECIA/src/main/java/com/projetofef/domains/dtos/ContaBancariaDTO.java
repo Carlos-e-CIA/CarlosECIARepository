@@ -12,7 +12,7 @@ public class ContaBancariaDTO {
     private Integer id;
 
     @NotBlank(message = "Instituição é obrigatória")
-    @Size(max = 60, message = "Instituição deve ter, no máximo, 60 caracteres")
+    @Size(max = 120, message = "Instituição deve ter, no máximo, 120 caracteres")
     private String instituicao;
 
     @NotBlank(message = "Agência é obrigatória")
@@ -22,8 +22,8 @@ public class ContaBancariaDTO {
     @NotNull(message = "Número é obrigatório")
     private Integer numero;
 
-    @NotBlank(message = "Apelido é obrigatória")
-    @Size(max = 60, message = "Apelido deve ter, no máximo, 60 caracteres")
+    @NotBlank(message = "Apelido é obrigatório")
+    @Size(max = 120, message = "Apelido deve ter, no máximo, 120 caracteres")
     private String apelido;
 
     @NotNull(message = "Saldo Inicial é obrigatório")
@@ -31,15 +31,15 @@ public class ContaBancariaDTO {
     @PositiveOrZero(message = "Saldo Inicial não pode ser negativo")
     private BigDecimal saldoInicial;
 
-    @NotBlank(message = "Ativa é obrigatória")
-    private char ativa;
+    @NotNull(message = "Ativa é obrigatória")
+    private Character ativa;
 
     @NotNull(message = "Usuário é obrigatório")
     private Integer usuarioId;
 
-    public ContaBancariaDTO() {}
+    ContaBancariaDTO() {}
 
-    public ContaBancariaDTO(Integer id, String instituicao, String agencia, Integer numero, String apelido, BigDecimal saldoInicial, char ativa, Integer usuarioId) {
+    public ContaBancariaDTO(Integer id, String instituicao, String agencia, Integer numero, String apelido, BigDecimal saldoInicial, Character ativa, Integer usuarioId) {
         this.id = id;
         this.instituicao = instituicao;
         this.agencia = agencia;
@@ -90,20 +90,20 @@ public class ContaBancariaDTO {
         this.apelido = apelido;
     }
 
+    public Character getAtiva() {
+        return ativa;
+    }
+
+    public void setAtiva(Character ativa) {
+        this.ativa = ativa;
+    }
+
     public BigDecimal getSaldoInicial() {
         return saldoInicial;
     }
 
     public void setSaldoInicial(BigDecimal saldoInicial) {
         this.saldoInicial = saldoInicial;
-    }
-
-    public char getAtiva() {
-        return ativa;
-    }
-
-    public void setAtiva(char ativa) {
-        this.ativa = ativa;
     }
 
     public Integer getUsuarioId() {
