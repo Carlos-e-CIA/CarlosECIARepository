@@ -1,14 +1,17 @@
 package com.projetofef.services;
 
-import com.projetofef.repositories.EntidadeRepository;
-import com.projetofef.repositories.UsuarioRepository;
-import com.projetofef.domains.Entidade;
 import com.projetofef.domains.Usuario;
+import com.projetofef.domains.Entidade;
 import com.projetofef.domains.dtos.EntidadeDTO;
 import com.projetofef.mappers.EntidadeMapper;
+import com.projetofef.repositories.LancamentoRepository;
+import com.projetofef.repositories.EntidadeRepository;
+import com.projetofef.repositories.UsuarioRepository;
+import com.projetofef.resources.exceptions.ResourceExceptionHandler;
 import com.projetofef.services.exceptions.ObjectNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -23,11 +26,14 @@ public class EntidadeService {
 
     private final EntidadeRepository entidadeRepo;
     private final UsuarioRepository usuarioRepo;
+    private final LancamentoRepository lancamentoRepo;
 
-    public EntidadeService(EntidadeRepository entidadeRepo, UsuarioRepository usuarioRepo) {
+    public EntidadeService(EntidadeRepository entidadeRepo, UsuarioRepository usuarioRepo, LancamentoRepository lancamentoRepo) {
         this.entidadeRepo = entidadeRepo;
         this.usuarioRepo = usuarioRepo;
+        this.lancamentoRepo = lancamentoRepo;
     }
+
     @Transactional(readOnly = true)
     public List<EntidadeDTO> findAll() {
         return EntidadeMapper.toDtoList(entidadeRepo.findAll());
@@ -35,91 +41,130 @@ public class EntidadeService {
 
     @Transactional(readOnly = true)
     public Page<EntidadeDTO> findAll(Pageable pageable) {
-        Page<Entidade> page = entidadeRepo.findAll(pageable);
+        final Pageable effective;
+        if (pageable == null || pageable.isUnpaged()) {
+            effective = Pageable.unpaged();
+        }
+        else {
+            effective = PageRequest.of(
+                    Math.max(0, pageable.getPageNumber()),
+                    Math.min(pageable.getPageSize(), MAX_PAGE_SIZE),
+                    pageable.getSort()
+            );
+        }
+
+        Page<Entidade> page = entidadeRepo.findAll(effective);
         return EntidadeMapper.toDtoPage(page);
     }
 
     @Transactional(readOnly = true)
-    public Page<EntidadeDTO> findByUsuario(Integer usuarioId, Pageable pageable) {
+    public Page<EntidadeDTO> findAllByUsuario(Integer usuarioId, Pageable pageable) {
         if (usuarioId == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "usuarioId é obrigatório");
         }
 
         if (!usuarioRepo.existsById(usuarioId)) {
-            throw new ObjectNotFoundException("Usuário não encontrado: id=" + usuarioId);
+            throw new ObjectNotFoundException("Usuario id " + usuarioId + "não encontrado");
         }
 
-        Page<Entidade> page = entidadeRepo.findByUsuario_Id(usuarioId, pageable);
+        final Pageable effective;
+        if (pageable == null || pageable.isUnpaged()) {
+            effective = Pageable.unpaged();
+        }
+        else {
+            effective = PageRequest.of(
+                    Math.max(0, pageable.getPageNumber()),
+                    Math.min(pageable.getPageSize(), MAX_PAGE_SIZE),
+                    pageable.getSort()
+            );
+        }
+
+        Page<Entidade> page = entidadeRepo.findByUsuario_Id(usuarioId, effective);
         return EntidadeMapper.toDtoPage(page);
     }
 
     @Transactional(readOnly = true)
-    public List<EntidadeDTO> findByUsuario(Integer usuarioId) {
-        return findByUsuario(usuarioId, Pageable.unpaged()).getContent();
+    public List<EntidadeDTO> findAllByUsuario(Integer usuarioId) {
+        return findAllByUsuario(usuarioId, Pageable.unpaged()).getContent();
     }
+
     @Transactional(readOnly = true)
     public EntidadeDTO findById(Integer id) {
         if (id == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "id de Entidade é obrigatório");
         }
-        Entidade entidade = entidadeRepo.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundException("Entidade não encontrada: id=" + id));
 
-        return EntidadeMapper.toDto(entidade);
+        return entidadeRepo.findById(id)
+                .map(EntidadeMapper::toDto)
+                .orElseThrow(() ->
+                        new ObjectNotFoundException("Entidade não encontrado: id = " + id));
     }
-    @Transactional
-    public EntidadeDTO create(EntidadeDTO dto) {
-        if (dto == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Dados da Entidade são obrigatórios");
+
+    @Transactional(readOnly = true)
+    public EntidadeDTO findByDocumento(String documento) {
+        if (documento == null || documento.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Documento do Entidade é obrigatório");
         }
 
-        if (dto.getUsuarioId() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "usuarioId é obrigatório");
-        }
+        String normalizedDocumento = documento.trim();
 
-        Usuario usuario = usuarioRepo.findById(dto.getUsuarioId())
-                .orElseThrow(() -> new ObjectNotFoundException("Usuário não encontrado: id=" + dto.getUsuarioId()));
-
-        dto.setId(null);
-        Entidade entidade = EntidadeMapper.toEntity(dto, usuario);
-
-        try {
-            entidade = entidadeRepo.save(entidade);
-        } catch (DataIntegrityViolationException ex) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não foi possível salvar a Entidade");
-        }
-
-        return EntidadeMapper.toDto(entidade);
+        return entidadeRepo.findByDocumento(normalizedDocumento)
+                .map(EntidadeMapper::toDto)
+                .orElseThrow(() ->
+                        new ObjectNotFoundException("Entidade não encontrada: Documento = " + normalizedDocumento));
     }
+
     @Transactional
-    public EntidadeDTO update(Integer id, EntidadeDTO dto) {
+    public EntidadeDTO create(EntidadeDTO entidadeDTO) {
+
+        if (entidadeDTO == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Dados do grupo são obrigatórios");
+        }
+
+        Integer usuarioId = entidadeDTO.getUsuarioId();
+        
+        if (usuarioId == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O Usuario é obrigatório");
+        }
+
+        Usuario usuario = usuarioRepo.findById(usuarioId)
+                .orElseThrow(() -> new ObjectNotFoundException("Usuario não encontrado: id = " + usuarioId));
+        
+        entidadeDTO.setId(null);
+        Entidade entidade;
+        try{
+            entidade = EntidadeMapper.toEntity(entidadeDTO, usuario);
+        } catch (IllegalArgumentException ex){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+        }
+
+        return EntidadeMapper.toDto(entidadeRepo.save(entidade));
+    }
+
+    @Transactional
+    public EntidadeDTO update(Integer id, EntidadeDTO entidadeDTO) {
         if (id == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Id é obrigatório");
         }
-        if (dto == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Dados da Entidade são obrigatórios");
+
+        if (entidadeDTO == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Dados do entidade são obrigatórios");
         }
 
         Entidade entidade = entidadeRepo.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundException("Entidade não encontrada: id=" + id));
+                .orElseThrow(() ->
+                        new ObjectNotFoundException("Entidade não encontrada: id = " + id));
 
-        if (dto.getUsuarioId() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "usuarioId é obrigatório");
-        }
+        Integer usuarioId = entidadeDTO.getUsuarioId();
 
-        Usuario usuario = usuarioRepo.findById(dto.getUsuarioId())
-                .orElseThrow(() -> new ObjectNotFoundException("Usuário não encontrado: id=" + dto.getUsuarioId()));
+        Usuario usuario = usuarioRepo.findById(usuarioId)
+                .orElseThrow(() -> new ObjectNotFoundException("Usuario não encontrado: id = " + usuarioId));
+        
+        EntidadeMapper.copyToEntity(entidadeDTO, entidade, usuario);
 
-        EntidadeMapper.copyToEntity(dto, entidade, usuario);
-
-        try {
-            entidade = entidadeRepo.save(entidade);
-        } catch (DataIntegrityViolationException ex) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não foi possível atualizar a Entidade");
-        }
-
-        return EntidadeMapper.toDto(entidade);
+        return EntidadeMapper.toDto(entidadeRepo.save(entidade));
     }
+
     @Transactional
     public void delete(Integer id) {
         if (id == null) {
@@ -128,19 +173,14 @@ public class EntidadeService {
 
         Entidade entidade = entidadeRepo.findById(id)
                 .orElseThrow(() ->
-                        new ObjectNotFoundException("Entidade não encontrada: id=" + id));
+                        new ObjectNotFoundException("Entidade não encontrada: id = " + id));
 
-        try {
-            entidadeRepo.delete(entidade);
-        } catch (DataIntegrityViolationException ex) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Não é possível excluir a Entidade, existem dependências relacionadas.");
+        if (lancamentoRepo.existsByEntidade_Id(id)) {
+            throw new DataIntegrityViolationException(
+                    "Entidade possui Lancamentos associados e não pode ser removida: id = " + id
+            );
         }
+
+        entidadeRepo.delete(entidade);
     }
 }
-
-
-
-
-
-

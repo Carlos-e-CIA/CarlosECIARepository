@@ -6,29 +6,27 @@ import com.projetofef.domains.dtos.FaturaCartaoDTO;
 import com.projetofef.domains.enums.StatusFatura;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class FaturaCartaoMapper {
+public final class FaturaCartaoMapper {
     private  FaturaCartaoMapper() {}
 
-    public static FaturaCartaoDTO toDto(FaturaCartao fc) {
-        if(fc == null) return null;
+    public static FaturaCartaoDTO toDto(FaturaCartao fa) {
+        if(fa == null) return null;
 
-        Integer idDto = fc.getId();
-        Integer cartaoCredito = (fc.getCartaoCredito() == null) ? null : fc.getCartaoCredito().getId();
-        int statusFatura = fc.getStatusFatura().getId();
+        Integer idDto = fa.getId();
+        Integer cartaoCreditoId = (fa.getCartaoCredito() == null) ? null : fa.getCartaoCredito().getId();
+        int statusFaturaInt = fa.getStatusFatura().getId();
 
         return new FaturaCartaoDTO(
                 idDto,
-                fc.getCompetencia(),
-                fc.getValorTotal(),
-                cartaoCredito,
-                statusFatura
+                fa.getValorTotal(),
+                cartaoCreditoId,
+                statusFaturaInt
         );
     }
 
@@ -48,35 +46,33 @@ public class FaturaCartaoMapper {
     public static FaturaCartao toEntity(FaturaCartaoDTO dto, CartaoCredito cartaoCredito) {
         if(dto == null) return null;
 
-        FaturaCartao fc = new FaturaCartao();
+        FaturaCartao fa = new FaturaCartao();
 
-        fc.setId(dto.getId());
-        fc.setCompetencia(trim(dto.getCompetencia()));
-        fc.setValorTotal(dto.getValorTotal());
-        fc.setCartaoCredito(cartaoCredito);
-        fc.setStatusFatura(StatusFatura.toEnum(dto.getStatusFatura()));
+        fa.setId(dto.getId());
+        fa.setValorTotal(dto.getValorTotal());
+        fa.setCartaoCredito(cartaoCredito);
+        fa.setStatusFatura(StatusFatura.toEnum(dto.getStatusFatura()));
 
-        return fc;
+        return fa;
     }
 
     public static FaturaCartao toEntity(FaturaCartaoDTO dto, Function<Integer, CartaoCredito> cartaoCreditoResolver) {
         if(dto == null) return null;
-        CartaoCredito cartaoCredito = (dto.getCartaoCredito() == null) ? null : cartaoCreditoResolver.apply(dto.getCartaoCredito());
+        CartaoCredito cartaoCredito = (dto.getCartaoCreditoId() == null) ? null : cartaoCreditoResolver.apply(dto.getCartaoCreditoId());
         return toEntity(dto, cartaoCredito);
     }
 
     public static void copyToEntity(FaturaCartaoDTO dto, FaturaCartao target, CartaoCredito cartaoCredito) {
         if(dto == null || target == null) return;
 
-        target.setCompetencia(trim(dto.getCompetencia()));
         target.setValorTotal(dto.getValorTotal());
         target.setCartaoCredito(cartaoCredito);
         target.setStatusFatura(StatusFatura.toEnum(dto.getStatusFatura()));
     }
 
-    public static void copyToEntity(FaturaCartaoDTO dto, FaturaCartao target, Function <Integer, CartaoCredito> cartaoCreditoResolver) {
+    public static void copyToEntity(FaturaCartaoDTO dto, FaturaCartao target, Function<Integer, CartaoCredito> cartaoCreditoResolver) {
         if(dto == null || target == null) return;
-        CartaoCredito cartaoCredito = (dto.getCartaoCredito() == null) ? null : cartaoCreditoResolver.apply(dto.getCartaoCredito());
+        CartaoCredito cartaoCredito = (dto.getCartaoCreditoId() == null) ? null : cartaoCreditoResolver.apply(dto.getCartaoCreditoId());
         copyToEntity(dto, target, cartaoCredito);
     }
 

@@ -1,20 +1,20 @@
 package com.projetofef.resources;
 
+import com.projetofef.domains.FaturaCartao;
 import com.projetofef.domains.dtos.FaturaCartaoDTO;
+import com.projetofef.domains.dtos.CartaoCreditoDTO;
+import com.projetofef.services.FaturaCartaoService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
+import java.math.BigDecimal;
 import java.util.List;
 
-@Validated
 @RestController
-@RequestMapping("/api/faturacartao")
+@RequestMapping("/api/faturaCartao")
 public class FaturaCartaoResource {
     private final FaturaCartaoService service;
 
@@ -24,14 +24,14 @@ public class FaturaCartaoResource {
 
     @GetMapping
     public ResponseEntity<Page<FaturaCartaoDTO>> list(
-            @RequestParam(required = false) Integer cartaoCredito,
-            @PageableDefault(size = 20, sort = "cartaoCredito") Pageable pageable) {
+            @RequestParam(required = false) Integer cartaoCreditoId,
+            @PageableDefault(size = 20, sort = "valorTotal") Pageable pageable) {
 
         Page<FaturaCartaoDTO> page;
 
-        if (cartaoCredito != null) {
-            page = service.findAllByCartaoCredito(cartaoCredito,  pageable);
-        }  else {
+        if (cartaoCreditoId != null) {
+            page = service.findAllByCartaoCredito(cartaoCreditoId, pageable);
+        } else {
             page = service.findAll(pageable);
         }
 
@@ -40,14 +40,13 @@ public class FaturaCartaoResource {
 
     @GetMapping("/all")
     public ResponseEntity<List<FaturaCartaoDTO>> listAll(
-            @RequestParam(required = false) Integer cartaoCredito)
-            {
+            @RequestParam(required = false) Integer cartaoCreditoId) {
 
         List<FaturaCartaoDTO> body;
 
-        if (cartaoCredito != null) {
-            body = service.findAllByCartaoCredito(cartaoCredito);
-        }  else {
+        if (cartaoCreditoId != null) {
+            body = service.findAllByCartaoCredito(cartaoCreditoId);
+        } else {
             body = service.findAll();
         }
 
@@ -60,28 +59,9 @@ public class FaturaCartaoResource {
         return ResponseEntity.ok(dto);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        service.delete(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<FaturaCartaoDTO> update(
-            @PathVariable Integer id,
-            @RequestBody @Validated(FaturaCartaoDTO.Update.class) FaturaCartaoDTO dto) {
-        dto.setId(id);
-        return ResponseEntity.ok(service.update(id, dto));
-    }
-
-    @PostMapping
-    public ResponseEntity<FaturaCartaoDTO> create(
-            @RequestBody @Validated(FaturaCartaoDTO.Create.class) FaturaCartaoDTO dto) {
-        FaturaCartaoDTO created = service.create(dto);
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(created.getId())
-                .toUri();
-        return ResponseEntity.created(location).body(created);
+    @GetMapping("/valorTotal/{valorTotal}")
+    public ResponseEntity<FaturaCartaoDTO> findByValorTotal(@PathVariable BigDecimal valorTotal) {
+        FaturaCartaoDTO dto = service.findByValorTotal(valorTotal);
+        return ResponseEntity.ok(dto);
     }
 }

@@ -4,119 +4,131 @@ import com.projetofef.domains.Usuario;
 import com.projetofef.domains.dtos.UsuarioDTO;
 import com.projetofef.mappers.UsuarioMapper;
 import com.projetofef.repositories.UsuarioRepository;
+import com.projetofef.repositories.LancamentoRepository;
+import com.projetofef.repositories.ContaBancariaRepository;
+import com.projetofef.repositories.EntidadeRepository;
+import com.projetofef.repositories.CentroCustoRepository;
+import com.projetofef.repositories.CartaoCreditoRepository;
 import com.projetofef.services.exceptions.ObjectNotFoundException;
-import org.springframework.data.domain.*;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UsuarioService {
-    private static final int MAX_PAGE_SIZE = 200;
     private final UsuarioRepository usuarioRepo;
-    public UsuarioService(UsuarioRepository usuarioRepo) {
+    private final LancamentoRepository lancamentoRepo;
+    private final ContaBancariaRepository contaBancariaRepo;
+    private final EntidadeRepository entidadeRepo;
+    private final CentroCustoRepository centroCustoRepo;
+    private final CartaoCreditoRepository cartaoCreditoRepo;
+
+    public UsuarioService(UsuarioRepository usuarioRepo, LancamentoRepository lancamentoRepo, ContaBancariaRepository contaBancariaRepo, EntidadeRepository entidadeRepo, CentroCustoRepository centroCustoRepo, CartaoCreditoRepository cartaoCreditoRepo) {
         this.usuarioRepo = usuarioRepo;
+        this.lancamentoRepo = lancamentoRepo;
+        this.contaBancariaRepo = contaBancariaRepo;
+        this.entidadeRepo = entidadeRepo;
+        this.centroCustoRepo = centroCustoRepo;
+        this.cartaoCreditoRepo = cartaoCreditoRepo;
     }
+
     @Transactional(readOnly = true)
-    public List<UsuarioDTO> findAll() {
+    public List<UsuarioDTO> findAll(){
         return UsuarioMapper.toDtoList(usuarioRepo.findAll());
     }
-    @Transactional(readOnly = true)
-    public Page<UsuarioDTO> findAll(Pageable pageable) {
-        Pageable effective = getEffectivePageable(pageable);
-        Page<Usuario> page = usuarioRepo.findAll(effective);
-        return UsuarioMapper.toDtoPage(page);
-    }
-    @Transactional(readOnly = true)
-    public Page<UsuarioDTO> findAllByNome(String nome, Pageable pageable) {
-        if (nome == null || nome.isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nome é obrigatório para filtro");
-        }
-        Pageable effective = getEffectivePageable(pageable);
-        Page<Usuario> page = usuarioRepo.findByNomeContainingIgnoreCase(nome.trim(), effective);
-        return UsuarioMapper.toDtoPage(page);
-    }
-    @Transactional(readOnly = true)
-    public List<UsuarioDTO> findAllByNome(String nome) {
-        return findAllByNome(nome, Pageable.unpaged()).getContent();
-    }
+
     @Transactional(readOnly = true)
     public UsuarioDTO findById(Integer id) {
         if (id == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "id de Usuario é obrigatório");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "id é obrigatório");
         }
+
         return usuarioRepo.findById(id)
                 .map(UsuarioMapper::toDto)
                 .orElseThrow(() ->
-                        new ObjectNotFoundException("Usuario não encontrado: id=" + id));
+                        new ObjectNotFoundException("Usuario não encontrado: id = " + id));
     }
-    @Transactional(readOnly = true)
-    public UsuarioDTO findByEmail(String email) {
-        if (email == null || email.isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email é obrigatório");
-        }
-        Optional<Usuario> usuario = usuarioRepo.findByEmail(email.trim());
-        return usuario
-                .map(UsuarioMapper::toDto)
-                .orElseThrow(() ->
-                        new ObjectNotFoundException("Usuario não encontrado: email=" + email));
-    }
+
     @Transactional
-    public UsuarioDTO create(UsuarioDTO dto) {
-        if (dto == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Dados do usuário são obrigatórios");
+    public UsuarioDTO create(UsuarioDTO usuarioDTO) {
+
+        if (usuarioDTO == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Dados do usuario são obrigatórios");
         }
-        if (usuarioRepo.existsByEmail(dto.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT,
-                    "Email já cadastrado: " + dto.getEmail());
+
+        usuarioDTO.setId(null);
+        Usuario usuario;
+        try{
+            usuario = UsuarioMapper.toEntity(usuarioDTO);
+        } catch (IllegalArgumentException ex){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
         }
-        dto.setId(null);
-        Usuario usuario = UsuarioMapper.toEntity(dto);
-        usuario = usuarioRepo.save(usuario);
-        return UsuarioMapper.toDto(usuario);
+
+        return UsuarioMapper.toDto(usuarioRepo.save(usuario));
     }
+
     @Transactional
-    public UsuarioDTO update(Integer id, UsuarioDTO dto) {
+    public UsuarioDTO update(Integer id, UsuarioDTO usuarioDTO) {
         if (id == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Id é obrigatório");
         }
-        if (dto == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Dados do usuário são obrigatórios");
+
+        if (usuarioDTO == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Dados do usuario são obrigatórios");
         }
+
         Usuario usuario = usuarioRepo.findById(id)
                 .orElseThrow(() ->
-                        new ObjectNotFoundException("Usuario não encontrado: id=" + id));
-        if (usuarioRepo.existsByEmail(dto.getEmail())
-                && !usuario.getEmail().equals(dto.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT,
-                    "Email já cadastrado: " + dto.getEmail());
-        }
-        UsuarioMapper.copyToEntity(dto, usuario);
-        usuario = usuarioRepo.save(usuario);
-        return UsuarioMapper.toDto(usuario);
+                        new ObjectNotFoundException("Usuario não encontrado: id = " + id));
+
+        UsuarioMapper.copyToEntity(usuarioDTO, usuario);
+
+        return UsuarioMapper.toDto(usuarioRepo.save(usuario));
     }
+
     @Transactional
     public void delete(Integer id) {
         if (id == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Id é obrigatório");
         }
+
         Usuario usuario = usuarioRepo.findById(id)
                 .orElseThrow(() ->
-                        new ObjectNotFoundException("Usuario não encontrado: id=" + id));
+                        new ObjectNotFoundException("Usuario não encontrado: id = " + id));
+
+        if (lancamentoRepo.existsByUsuario_Id(id)) {
+            throw new DataIntegrityViolationException(
+                    "Usuario possui lancamentos associados e não pode ser removido: id = " + id
+            );
+        }
+
+        if (contaBancariaRepo.existsByUsuario_Id(id)) {
+            throw new DataIntegrityViolationException(
+                    "Usuario possui contaBancarias associadas e não pode ser removido: id = " + id
+            );
+        }
+
+        if (entidadeRepo.existsByUsuario_Id(id)) {
+            throw new DataIntegrityViolationException(
+                    "Usuario possui entidades associadas e não pode ser removido: id = " + id
+            );
+        }
+
+        if (centroCustoRepo.existsByUsuario_Id(id)) {
+            throw new DataIntegrityViolationException(
+                    "Usuario possui centroCustos associados e não pode ser removido: id = " + id
+            );
+        }
+
+        if (cartaoCreditoRepo.existsByUsuario_Id(id)) {
+            throw new DataIntegrityViolationException(
+                    "Usuario possui cartaoCreditos associados e não pode ser removido: id = " + id
+            );
+        }
+
         usuarioRepo.delete(usuario);
     }
-    private Pageable getEffectivePageable(Pageable pageable) {
-        if (pageable == null || pageable.isUnpaged()) {
-            return Pageable.unpaged();
-        }
-        return PageRequest.of(
-                Math.max(0, pageable.getPageNumber()),
-                Math.min(pageable.getPageSize(), MAX_PAGE_SIZE),
-                pageable.getSort()
-        );
-    }
-
 }

@@ -1,7 +1,7 @@
 package com.projetofef.domains.enums;
 
 public enum TipoLancamento {
-    PAGAR(0, "CONTA"), RECEBER(1, "CARTAO");
+    PAGAR(0, "PAGAR"), RECEBER(1, "RECEBER");
 
     private Integer id;
     private String descricao;
@@ -12,28 +12,28 @@ public enum TipoLancamento {
     }
 
     public Integer getId() {
-        return id;
-    }
+            return id;
+        }
 
     public void setId(Integer id) {
-        this.id = id;
-    }
+            this.id = id;
+        }
 
     public String getDescricao() {
-        return descricao;
-    }
+            return descricao;
+        }
 
     public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
+            this.descricao = descricao;
+        }
 
     public static TipoLancamento toEnum(Integer id) {
-        if(id == null) return null;
+        if (id == null) return null;
         for (TipoLancamento tipoLancamento : TipoLancamento.values()) {
             if (id.equals(tipoLancamento.getId())) {
                 return tipoLancamento;
             }
         }
-        throw new IllegalArgumentException("TipoLancamento Inválido!");
+        throw new IllegalArgumentException("TipoLancamento inválido!");
     }
 }

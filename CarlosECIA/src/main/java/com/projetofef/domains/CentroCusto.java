@@ -12,30 +12,29 @@ import java.util.Objects;
 @Entity
 @Table
 @SequenceGenerator(
-        name = "seq_centro_custo",
-        sequenceName = "seq_centro_custo",
+        name = "seq_centroCusto",
+        sequenceName = "seq_centroCusto",
         allocationSize = 1
 )
 public class CentroCusto {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_centro_custo")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_livro")
     private Integer id;
 
     @NotBlank
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 120)
     private String nome;
 
     @NotBlank
-    @Column(nullable = false, length = 20, unique = true)
+    @Column(name = "codigo", nullable = false, length = 20, unique = true)
     private String codigo;
 
     @NotNull
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1)
     private Integer ativo;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "idusuario", nullable = false)
+    @JoinColumn(name = "idUsuario", nullable = false)
     @JsonBackReference
     private Usuario usuario;
 
@@ -46,7 +45,7 @@ public class CentroCusto {
             orphanRemoval = false,
             fetch = FetchType.LAZY
     )
-    @OrderBy("id ASC")
+    @OrderBy("descricao ASC")
     private List<Lancamento> lancamentos = new ArrayList<>();
 
     public CentroCusto() {
@@ -100,24 +99,20 @@ public class CentroCusto {
         this.usuario = usuario;
     }
 
-    public List<Lancamento> getLancamentos() {
-        return lancamentos;
-    }
-
     public void setLancamentos(List<Lancamento> lancamentos) {
         this.lancamentos = lancamentos;
     }
 
-    public void addLancamento(Lancamento lancamento) {
-        if (lancamentos == null) return;
-        lancamentos.add(lancamento);
-        lancamento.setCentroCusto(this);
+    public void addLancamento(Lancamento la) {
+        if(lancamentos == null) return;
+        lancamentos.add(la);
+        la.setCentroCusto(this);
     }
 
-    public void removeLancamento(Lancamento lancamento) {
-        if (lancamentos == null) return;
-        lancamentos.remove(lancamento);
-        if (lancamento.getCentroCusto() == this) lancamento.setCentroCusto(null);
+    public void removeLancamento(Lancamento la) {
+        if(lancamentos == null) return;
+        lancamentos.remove(la);
+        if(la.getCentroCusto() == this) la.setCentroCusto(null);
     }
 
     @Override

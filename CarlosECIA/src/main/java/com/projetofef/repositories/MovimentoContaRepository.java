@@ -12,6 +12,9 @@ import java.util.Optional;
 @Repository
 public interface MovimentoContaRepository extends JpaRepository<MovimentoConta, Integer> {
     Page<MovimentoConta> findByContaBancaria_Id(Integer contaBancariaId, Pageable pageable);
+    Page<MovimentoConta> findByInvestimento_Id(Integer investimentoId, Pageable pageable);
+    Page<MovimentoConta> findByContaBancaria_IdAndInvestimento_Id(Integer contaBancariaId, Integer investimentoId, Pageable pageable);
     Optional<MovimentoConta> findByHistorico(String historico);
     boolean existsByContaBancaria_Id(Integer contaBancariaId);
+    boolean existsByInvestimento_Id(Integer investimentoId);
 }

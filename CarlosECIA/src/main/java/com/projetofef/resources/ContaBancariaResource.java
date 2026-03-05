@@ -25,7 +25,7 @@ public class ContaBancariaResource {
     @GetMapping
     public ResponseEntity<Page<ContaBancariaDTO>> list(
             @RequestParam(required = false) Integer usuarioId,
-            @PageableDefault(size = 20, sort = "numero") Pageable pageable) {
+            @PageableDefault(size = 20, sort = "dataSaldoInicial") Pageable pageable) {
 
         Page<ContaBancariaDTO> page;
 
@@ -40,7 +40,7 @@ public class ContaBancariaResource {
 
     @GetMapping("/all")
     public ResponseEntity<List<ContaBancariaDTO>> listAll(
-            @RequestParam(required = false) Integer usuarioId {
+            @RequestParam(required = false) Integer usuarioId) {
 
         List<ContaBancariaDTO> body;
 

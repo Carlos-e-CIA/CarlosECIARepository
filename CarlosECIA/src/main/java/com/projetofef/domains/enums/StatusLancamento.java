@@ -28,12 +28,12 @@ public enum StatusLancamento {
     }
 
     public static StatusLancamento toEnum(Integer id) {
-        if(id == null) return null;
+        if (id == null) return null;
         for (StatusLancamento statusLancamento : StatusLancamento.values()) {
             if (id.equals(statusLancamento.getId())) {
                 return statusLancamento;
             }
         }
-        throw new IllegalArgumentException("StatusLancamento Inválido!");
+        throw new IllegalArgumentException("StatusLancamento inválido!");
     }
 }

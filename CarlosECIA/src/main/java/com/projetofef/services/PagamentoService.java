@@ -4,7 +4,6 @@ import com.projetofef.domains.Lancamento;
 import com.projetofef.repositories.LancamentoRepository;
 import com.projetofef.repositories.PagamentoRepository;
 import com.projetofef.services.exceptions.ObjectNotFoundException;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,12 +23,12 @@ public class PagamentoService {
     private static final int MAX_PAGE_SIZE = 200;
 
     private final PagamentoRepository pagamentoRepo;
-    private final ContaBancariaRepository contaOrigemRepo;
+    private final ContaBancariaRepository contaBancariaRepo;
     private final LancamentoRepository lancamentoRepo;
 
-    public PagamentoService(PagamentoRepository pagamentoRepo, ContaBancariaRepository contaOrigemRepo, LancamentoRepository lancamentoRepo) {
+    public PagamentoService(PagamentoRepository pagamentoRepo, ContaBancariaRepository contaBancariaRepo, LancamentoRepository lancamentoRepo) {
         this.pagamentoRepo = pagamentoRepo;
-        this.contaOrigemRepo = contaOrigemRepo;
+        this.contaBancariaRepo = contaBancariaRepo;
         this.lancamentoRepo = lancamentoRepo;
     }
 
@@ -57,13 +56,13 @@ public class PagamentoService {
     }
 
     @Transactional(readOnly = true)
-    public Page<PagamentoDTO> findAllByContaBancaria(Integer contaOrigem, Pageable pageable) {
-        if (contaOrigem == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "contaOrigem é obrigatório");
+    public Page<PagamentoDTO> findAllByContaBancaria(Integer contaBancaria, Pageable pageable) {
+        if (contaBancaria == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "contaBancaria é obrigatório");
         }
 
-        if (!contaOrigemRepo.existsById(contaOrigem)) {
-            throw new ObjectNotFoundException("Conta Origem " + contaOrigem + "não encontrado");
+        if (!contaBancariaRepo.existsById(contaBancaria)) {
+            throw new ObjectNotFoundException("Conta Bancaria " + contaBancaria + "não encontrado");
         }
 
         final Pageable effective;
@@ -78,13 +77,13 @@ public class PagamentoService {
             );
         }
 
-        Page<Pagamento> page = pagamentoRepo.findByContaBancaria_Id(contaOrigem, effective);
+        Page<Pagamento> page = pagamentoRepo.findByContaBancaria_Id(contaBancaria, effective);
         return PagamentoMapper.toDtoPage(page);
     }
 
     @Transactional(readOnly = true)
-    public List<PagamentoDTO> findAllByContaBancaria(Integer contaOrigem) {
-        return findAllByContaBancaria(contaOrigem, Pageable.unpaged()).getContent();
+    public List<PagamentoDTO> findAllByContaBancaria(Integer contaBancaria) {
+        return findAllByContaBancaria(contaBancaria, Pageable.unpaged()).getContent();
     }
 
     @Transactional(readOnly = true)
@@ -93,7 +92,7 @@ public class PagamentoService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "lancamentoId é obrigatório");
         }
 
-        if (!contaOrigemRepo.existsById(lancamentoId)) {
+        if (!contaBancariaRepo.existsById(lancamentoId)) {
             throw new ObjectNotFoundException("Lancamento id " + lancamentoId + "não encontrado");
         }
 
@@ -119,9 +118,9 @@ public class PagamentoService {
     }
 
     @Transactional(readOnly = true)
-    public Page<PagamentoDTO> findAllByContaBancariaAndLancamento(Integer contaOrigem, Integer lancamento, Pageable pageable) {
-        if (!contaOrigemRepo.existsById(contaOrigem)) {
-            throw new ObjectNotFoundException("Conta Bancaria " + contaOrigem + " não encontrado");
+    public Page<PagamentoDTO> findAllByContaBancariaAndLancamento(Integer contaBancaria, Integer lancamento, Pageable pageable) {
+        if (!contaBancariaRepo.existsById(contaBancaria)) {
+            throw new ObjectNotFoundException("Conta Bancaria " + contaBancaria + " não encontrado");
         }
         if (!lancamentoRepo.existsById(lancamento)) {
             throw new ObjectNotFoundException("Lancamento id " + lancamento + " não encontrada");
@@ -138,13 +137,13 @@ public class PagamentoService {
             );
         }
 
-        Page<Pagamento> page = pagamentoRepo.findByContaBancaria_IdAndLancamento_Id(contaOrigem, lancamento, effective);
+        Page<Pagamento> page = pagamentoRepo.findByContaBancaria_IdAndLancamento_Id(contaBancaria, lancamento, effective);
         return PagamentoMapper.toDtoPage(page);
     }
 
     @Transactional(readOnly = true)
-    public List<PagamentoDTO> findAllByContaBancariaAndLancamento(Integer contaOrigem, Integer lancamento) {
-        return findAllByContaBancariaAndLancamento(contaOrigem, lancamento, Pageable.unpaged()).getContent();
+    public List<PagamentoDTO> findAllByContaBancariaAndLancamento(Integer contaBancaria, Integer lancamento) {
+        return findAllByContaBancariaAndLancamento(contaBancaria, lancamento, Pageable.unpaged()).getContent();
     }
 
     @Transactional(readOnly = true)
@@ -167,15 +166,15 @@ public class PagamentoService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Dados do pagamento são obrigatórios");
         }
 
-        Integer contaOrigemId = pagamentoDTO.getContaOrigem();
-        Integer lancamentoId = pagamentoDTO.getLancamento();
+        Integer contaBancariaId = pagamentoDTO.getContaBancariaId();
+        Integer lancamentoId = pagamentoDTO.getLancamentoId();
 
-        if (contaOrigemId == null || lancamentoId == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A conta origem e o Lancamento são obrigatórios");
+        if (contaBancariaId == null || lancamentoId == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A conta bancaria e o Lancamento são obrigatórios");
         }
 
-        ContaBancaria contaOrigem = contaOrigemRepo.findById(contaOrigemId)
-                .orElseThrow(() -> new ObjectNotFoundException("Conta Bancaria não encontrado: id=" + contaOrigemId));
+        ContaBancaria contaBancaria = contaBancariaRepo.findById(contaBancariaId)
+                .orElseThrow(() -> new ObjectNotFoundException("Conta Bancaria não encontrado: id=" + contaBancariaId));
 
         Lancamento lancamento = lancamentoRepo.findById(lancamentoId)
                 .orElseThrow(() -> new ObjectNotFoundException("Lancamento não encontrada: id=" + lancamentoId));
@@ -183,7 +182,7 @@ public class PagamentoService {
         pagamentoDTO.setId(null);
         Pagamento pagamento;
         try{
-            pagamento = PagamentoMapper.toEntity(pagamentoDTO, contaOrigem, lancamento);
+            pagamento = PagamentoMapper.toEntity(pagamentoDTO, contaBancaria, lancamento);
         } catch (IllegalArgumentException ex){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
         }
@@ -205,20 +204,20 @@ public class PagamentoService {
                 .orElseThrow(() ->
                         new ObjectNotFoundException("Pagamento não encontrado: id=" + id));
 
-        Integer contaOrigem = pagamentoDTO.getContaOrigem();
-        Integer lancamento = pagamentoDTO.getLancamento();
+        Integer contaBancaria = pagamentoDTO.getContaBancariaId();
+        Integer lancamento = pagamentoDTO.getLancamentoId();
 
-        if (contaOrigem == null || lancamento == null) {
+        if (contaBancaria == null || lancamento == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A conta bancaria e o Lancamento são obrigatórios");
         }
 
-        ContaBancaria contaOrigem1 = contaOrigemRepo.findById(contaOrigem)
-                .orElseThrow(() -> new ObjectNotFoundException("Conta bancaria não encontrado: id=" + contaOrigem));
+        ContaBancaria contaBancaria1 = contaBancariaRepo.findById(contaBancaria)
+                .orElseThrow(() -> new ObjectNotFoundException("Conta bancaria não encontrado: id=" + contaBancaria));
 
         Lancamento lancamento1 = lancamentoRepo.findById(lancamento)
                 .orElseThrow(() -> new ObjectNotFoundException("Lancamento não encontrada: id=" + lancamento));
 
-        PagamentoMapper.copyToEntity(pagamentoDTO, pagamento, contaOrigem1, lancamento1);
+        PagamentoMapper.copyToEntity(pagamentoDTO, pagamento, contaBancaria1, lancamento1);
 
         return PagamentoMapper.toDto(pagamentoRepo.save(pagamento));
     }

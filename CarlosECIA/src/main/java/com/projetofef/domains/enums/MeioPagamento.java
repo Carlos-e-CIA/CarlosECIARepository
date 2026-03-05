@@ -28,12 +28,12 @@ public enum MeioPagamento {
     }
 
     public static MeioPagamento toEnum(Integer id) {
-        if(id == null) return null;
+        if (id == null) return null;
         for (MeioPagamento meioPagamento : MeioPagamento.values()) {
             if (id.equals(meioPagamento.getId())) {
                 return meioPagamento;
             }
         }
-        throw new IllegalArgumentException("MeioPagamento Inválido!");
+        throw new IllegalArgumentException("MeioPagamento inválido!");
     }
 }
