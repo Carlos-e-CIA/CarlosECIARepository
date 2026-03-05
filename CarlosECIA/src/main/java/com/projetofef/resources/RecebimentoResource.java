@@ -10,20 +10,20 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/recebimentos")
+@RequestMapping("/api/recebimento")
 public class RecebimentoResource {
     private final RecebimentoService service;
 
     public RecebimentoResource(RecebimentoService service) {
         this.service = service;
     }
+
     @GetMapping
     public ResponseEntity<Page<RecebimentoDTO>> list(
             @RequestParam(required = false) Integer lancamentoId,
             @RequestParam(required = false) Integer contaBancariaId,
-            @PageableDefault(size = 20, sort = "dataRecebimento") Pageable pageable)
+            @PageableDefault(size = 120, sort = "observacao") Pageable pageable) {
 
-    {
         Page<RecebimentoDTO> page;
 
         if (lancamentoId != null && contaBancariaId != null) {
@@ -37,36 +37,31 @@ public class RecebimentoResource {
         }
 
         return ResponseEntity.ok(page);
-
     }
+
     @GetMapping("/all")
     public ResponseEntity<List<RecebimentoDTO>> listAll(
             @RequestParam(required = false) Integer lancamentoId,
-            @RequestParam(required = false) Integer contaBancariaId)
+            @RequestParam(required = false) Integer contaBancariaId) {
 
-    {
-        List<RecebimentoDTO> list;
+        List<RecebimentoDTO> body;
 
         if (lancamentoId != null && contaBancariaId != null) {
-            list = service.findAllByLancamentoAndContaBancaria(lancamentoId, contaBancariaId);
+            body = service.findAllByLancamentoAndContaBancaria(lancamentoId, contaBancariaId);
         } else if (lancamentoId != null) {
-            list = service.findAllByLancamento(lancamentoId);
+            body = service.findAllByLancamento(lancamentoId);
         } else if (contaBancariaId != null) {
-            list = service.findAllByContaBancaria(contaBancariaId);
+            body = service.findAllByContaBancaria(contaBancariaId);
         } else {
-            list = service.findAll();
+            body = service.findAll();
         }
 
-        return ResponseEntity.ok(list);
+        return ResponseEntity.ok(body);
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<RecebimentoDTO> findById(@PathVariable Integer id) {
         RecebimentoDTO dto = service.findById(id);
-        return ResponseEntity.ok(dto);
-    }
-    @GetMapping("/observacao/{obs}")
-    public ResponseEntity<RecebimentoDTO> findByObservacao(@PathVariable String obs) {
-        RecebimentoDTO dto = service.findByObservacao(obs);
         return ResponseEntity.ok(dto);
     }
 }

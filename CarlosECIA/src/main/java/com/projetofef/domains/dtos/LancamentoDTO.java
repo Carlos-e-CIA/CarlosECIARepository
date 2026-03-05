@@ -1,78 +1,78 @@
 package com.projetofef.domains.dtos;
 
-import com.projetofef.domains.*;
-import com.projetofef.domains.enums.MeioPagamento;
-import com.projetofef.domains.enums.StatusLancamento;
-import com.projetofef.domains.enums.TipoLancamento;
 import jakarta.validation.constraints.*;
-
 import java.math.BigDecimal;
 
 public class LancamentoDTO {
-
     public interface Create {}
     public interface Update {}
 
-    @Null(groups = LancamentoDTO.Create.class, message = "Id deve ser omitido na criação")
-    @NotNull(groups = LancamentoDTO.Update.class, message = "Id é obrigatório na atualização")
+    @Null(groups = Create.class, message = "Id deve ser omitido na criação")
+    @NotNull(groups = Update.class, message = "Id é obrigatório na atualização")
     private Integer id;
 
+    @NotBlank(message = "Tipo é obrigatório")
+    @Size(max = 120, message = "Tipo deve ter, no máximo, 120 caracteres")
+    private String tipo;
+
     @NotBlank(message = "Descricao é obrigatório")
-    @Size(max = 300, message = "Descricao deve ter, no máximo, 300 caracteres")
+    @Size(max = 120, message = "Descricao deve ter, no máximo, 120 caracteres")
     private String descricao;
 
     @NotNull(message = "Valor é obrigatório")
-    @Digits(integer = 12, fraction = 2)
-    @Positive(message = "O valor deve ser maior que zero")
-    @PositiveOrZero(message = " O valor não pode ser negativo")
+    @Digits(integer = 15, fraction = 2, message = "Valor deve ter, no máximo, 15 casas inteiras e 2 decimais")
+    @PositiveOrZero(message = "Valor não pode ser negativo")
     private BigDecimal valor;
 
-    @Min(value = 0)
-    @Max(value = 3)
-    private int meioPagamento;
+    @NotBlank(message = "MeioPagamento é obrigatório")
+    @Size(max = 120, message = "MeioPagamento deve ter, no máximo, 120 caracteres")
+    private String meioPagamento;
 
-    @NotNull(message = "Valor é obrigatório")
-    @Digits(integer = 12, fraction = 2)
-    @Positive(message = "O valor deve ser maior que zero")
-    @PositiveOrZero(message = " O valor não pode ser negativo")
+    @NotNull(message = "ValorBaixado é obrigatório")
+    @Digits(integer = 15, fraction = 2, message = "ValorBaixado deve ter, no máximo, 15 casas inteiras e 2 decimais")
+    @PositiveOrZero(message = "ValorBaixado não pode ser negativo")
     private BigDecimal valorBaixado;
 
-    @NotNull(message = "Id do usuário é obrigatório")
-    private Integer usuario;
+    @NotNull(message = "ContaBancaria é obrigatório")
+    private Integer contaBancariaId;
 
-    @NotNull(message = "Id da entidade é obrigatório")
-    private Integer entidade;
+    @NotNull(message = "Usuario é obrigatório")
+    private Integer usuarioId;
 
-    @NotNull(message = "Id do centroCusto é obrigatório")
-    private Integer centroCusto;
+    @NotNull(message = "Entidade é obrigatório")
+    private Integer entidadeId;
 
-    @NotNull(message = "Id da conta bancária é obrigatório")
-    private Integer contaBancaria;
+    @NotNull(message = "CentroCusto é obrigatório")
+    private Integer centroCustoId;
 
-    @NotNull(message = "Id do cartão de crédito é obrigatório")
-    private Integer cartaoCredito;
+    @NotNull(message = "CartaoCredito é obrigatório")
+    private Integer cartaoCreditoId;
 
-    @Min(value = 0)
-    @Max(value = 1)
-    private int tipoLancamento;
+    @Min(value = 0, message = "TipoLancamento inválido: use 0 (PAGAR), 1 (RECEBER)")
+    @Max(value = 1, message = "TipoLancamento inválido: use 0 (PAGAR), 1 (RECEBER)")
+    private int TipoLancamento;
 
-    @Min(value = 0)
-    @Max(value = 3)
-    private int statusLancamento;
+    @Min(value = 0, message = "StatusLancamento inválido: use 0 (PENDENTE), 1 (BAIXADO), 2 (PARCIAL), 3 (CANCELADO)")
+    @Max(value = 3, message = "StatusLancamento inválido: use 0 (PENDENTE), 1 (BAIXADO), 2 (PARCIAL), 3 (CANCELADO)")
+    private int StatusLancamento;
 
-    public LancamentoDTO(Integer id, String descricao, BigDecimal valor, int meioPagamento, BigDecimal valorBaixado, Integer usuario, Integer entidade, Integer centroCusto, Integer contaBancaria, Integer cartaoCredito, int tipoLancamento, int statusLancamento) {
+    public LancamentoDTO() {
+    }
+
+    public LancamentoDTO(Integer id, String tipo, String descricao, BigDecimal valor, String meioPagamento, BigDecimal valorBaixado, Integer contaBancariaId, Integer usuarioId, Integer entidadeId, Integer centroCustoId, Integer cartaoCreditoId, int tipoLancamento, int statusLancamento) {
         this.id = id;
+        this.tipo = tipo;
         this.descricao = descricao;
         this.valor = valor;
         this.meioPagamento = meioPagamento;
         this.valorBaixado = valorBaixado;
-        this.usuario = usuario;
-        this.entidade = entidade;
-        this.centroCusto = centroCusto;
-        this.contaBancaria = contaBancaria;
-        this.cartaoCredito = cartaoCredito;
-        this.tipoLancamento = tipoLancamento;
-        this.statusLancamento = statusLancamento;
+        this.contaBancariaId = contaBancariaId;
+        this.usuarioId = usuarioId;
+        this.entidadeId = entidadeId;
+        this.centroCustoId = centroCustoId;
+        this.cartaoCreditoId = cartaoCreditoId;
+        TipoLancamento = tipoLancamento;
+        StatusLancamento = statusLancamento;
     }
 
     public Integer getId() {
@@ -81,6 +81,14 @@ public class LancamentoDTO {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 
     public String getDescricao() {
@@ -99,11 +107,11 @@ public class LancamentoDTO {
         this.valor = valor;
     }
 
-    public int getMeioPagamento() {
+    public String getMeioPagamento() {
         return meioPagamento;
     }
 
-    public void setMeioPagamento(int meioPagamento) {
+    public void setMeioPagamento(String meioPagamento) {
         this.meioPagamento = meioPagamento;
     }
 
@@ -115,59 +123,59 @@ public class LancamentoDTO {
         this.valorBaixado = valorBaixado;
     }
 
-    public Integer getUsuario() {
-        return usuario;
+    public Integer getContaBancariaId() {
+        return contaBancariaId;
     }
 
-    public void setUsuario(Integer usuario) {
-        this.usuario = usuario;
+    public void setContaBancariaId(Integer contaBancariaId) {
+        this.contaBancariaId = contaBancariaId;
     }
 
-    public Integer getEntidade() {
-        return entidade;
+    public Integer getUsuarioId() {
+        return usuarioId;
     }
 
-    public void setEntidade(Integer entidade) {
-        this.entidade = entidade;
+    public void setUsuarioId(Integer usuarioId) {
+        this.usuarioId = usuarioId;
     }
 
-    public Integer getCentroCusto() {
-        return centroCusto;
+    public Integer getEntidadeId() {
+        return entidadeId;
     }
 
-    public void setCentroCusto(Integer centroCusto) {
-        this.centroCusto = centroCusto;
+    public void setEntidadeId(Integer entidadeId) {
+        this.entidadeId = entidadeId;
     }
 
-    public Integer getContaBancaria() {
-        return contaBancaria;
+    public Integer getCentroCustoId() {
+        return centroCustoId;
     }
 
-    public void setContaBancaria(Integer contaBancaria) {
-        this.contaBancaria = contaBancaria;
+    public void setCentroCustoId(Integer centroCustoId) {
+        this.centroCustoId = centroCustoId;
     }
 
-    public Integer getCartaoCredito() {
-        return cartaoCredito;
+    public Integer getCartaoCreditoId() {
+        return cartaoCreditoId;
     }
 
-    public void setCartaoCredito(Integer cartaoCredito) {
-        this.cartaoCredito = cartaoCredito;
+    public void setCartaoCreditoId(Integer cartaoCreditoId) {
+        this.cartaoCreditoId = cartaoCreditoId;
     }
 
     public int getTipoLancamento() {
-        return tipoLancamento;
+        return TipoLancamento;
     }
 
     public void setTipoLancamento(int tipoLancamento) {
-        this.tipoLancamento = tipoLancamento;
+        TipoLancamento = tipoLancamento;
     }
 
     public int getStatusLancamento() {
-        return statusLancamento;
+        return StatusLancamento;
     }
 
     public void setStatusLancamento(int statusLancamento) {
-        this.statusLancamento = statusLancamento;
+        StatusLancamento = statusLancamento;
     }
 }

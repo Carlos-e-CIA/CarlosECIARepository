@@ -1,11 +1,11 @@
 package com.projetofef.infra;
 
+import com.projetofef.domains.enums.MeioPagamento;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
-import com.projetofef.domains.enums.MeioPagamento;
 
 @Converter(autoApply = false)
-public class MeioPagamentoConverter implements AttributeConverter<MeioPagamento, Integer> {
+public class MeioPagamentoConverter implements AttributeConverter<MeioPagamento, Integer>{
     @Override
     public Integer convertToDatabaseColumn(MeioPagamento meioPagamento){
         return meioPagamento == null ? null : meioPagamento.getId();
@@ -13,6 +13,6 @@ public class MeioPagamentoConverter implements AttributeConverter<MeioPagamento,
 
     @Override
     public MeioPagamento convertToEntityAttribute(Integer dbValue){
-        return  MeioPagamento.toEnum(dbValue);
+        return MeioPagamento.toEnum(dbValue);
     }
 }

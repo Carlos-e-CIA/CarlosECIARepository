@@ -1,8 +1,6 @@
 package com.projetofef.domains.dtos;
 
-import com.projetofef.domains.MovimentoConta;
 import jakarta.validation.constraints.*;
-
 import java.math.BigDecimal;
 
 public class MovimentoContaDTO {
@@ -29,63 +27,62 @@ public class MovimentoContaDTO {
     @NotNull(message = "ContaBancária é obrigatório")
     private Integer contaBancariaId;
 
+    @NotNull(message = "Investimento é obrigatório")
+    private Integer investimentoId;
+
     @Min(value = 0, message = "TipoTransacao inválido: use 0 (CREDITO), 1 (DEBITO), 2 (TRANSACAO)")
     @Max(value = 2, message = "TipoTransacao inválido: use 0 (CREDITO), 1 (DEBITO), 2 (TRANSACAO)")
     private int TipoTransacao;
 
-    public MovimentoContaDTO(Integer id, String tipo, BigDecimal valor, String historico, Integer contaBancariaId, int tipoTransacao) {
+    public MovimentoContaDTO(Integer id, String tipo, BigDecimal valor, String historico, Integer contaBancariaId, Integer investimentoId, int tipoTransacao) {
         this.id = id;
         this.tipo = tipo;
         this.valor = valor;
         this.historico = historico;
         this.contaBancariaId = contaBancariaId;
+        this.investimentoId = investimentoId;
         TipoTransacao = tipoTransacao;
     }
 
     public Integer getId() {
         return id;
     }
-
     public void setId(Integer id) {
         this.id = id;
     }
-
     public String getTipo() {
         return tipo;
     }
-
     public void setTipo(String tipo) {
         this.tipo = tipo;
     }
-
     public BigDecimal getValor() {
         return valor;
     }
-
     public void setValor(BigDecimal valor) {
         this.valor = valor;
     }
-
     public String getHistorico() {
         return historico;
     }
-
     public void setHistorico(String historico) {
         this.historico = historico;
     }
-
     public Integer getContaBancariaId() {
         return contaBancariaId;
     }
-
     public void setContaBancariaId(Integer contaBancariaId) {
         this.contaBancariaId = contaBancariaId;
     }
-
+    public Integer getInvestimentoId() {
+        return investimentoId;
+    }
+    public void setInvestimentoId(Integer investimentoId) {
+        this.investimentoId = investimentoId;
+    }
     public int getTipoTransacao() {
         return TipoTransacao;
     }
-
     public void setTipoTransacao(int tipoTransacao) {
         TipoTransacao = tipoTransacao;
     }

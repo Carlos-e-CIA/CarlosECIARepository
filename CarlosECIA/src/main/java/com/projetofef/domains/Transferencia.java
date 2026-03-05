@@ -28,15 +28,15 @@ public class Transferencia {
     private LocalDate data = LocalDate.now();
 
     @NotNull
-    @Digits(integer = 15, fraction = 3)
-    @Column(precision = 18, scale = 3, nullable = false)
+    @Digits(integer = 15, fraction = 2)
+    @Column(precision = 17, scale = 3, nullable = false)
     private BigDecimal valor;
 
     @Column(length = 255)
     private String observacao;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "idcontabancaria", nullable = false)
+    @JoinColumn(name = "idContaBancaria", nullable = false)
     @JsonBackReference
     private ContaBancaria contaBancaria;
 

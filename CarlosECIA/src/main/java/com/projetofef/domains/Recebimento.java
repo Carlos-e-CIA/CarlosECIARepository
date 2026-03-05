@@ -13,14 +13,14 @@ import java.util.Objects;
 @Entity
 @Table
 @SequenceGenerator(
-        name = "seq_controleLeitura",
-        sequenceName = "seq_controleLeitura",
+        name = "seq_recebimento",
+        sequenceName = "seq_recebimento",
         allocationSize = 1
 )
 
 public class Recebimento {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_Recebimento")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_recebimento")
     private Integer id;
 
     @JsonFormat(pattern = "dd/MM/yyyy")
@@ -46,34 +46,65 @@ public class Recebimento {
     @JsonBackReference
     private Lancamento lancamento;
 
-    public Recebimento() {}
+    public Recebimento() {
+    }
 
-    public Recebimento(Integer id, LocalDate dataRecebimento, BigDecimal valorRecebimento, String observacao, ContaBancaria contaBancaria, Lancamento lancamentoId) {
+    public Recebimento(Integer id, LocalDate dataRecebimento, BigDecimal valorRecebimento, String observacao, ContaBancaria contaBancaria, Lancamento lancamento) {
         this.id = id;
         this.dataRecebimento = dataRecebimento;
         this.valorRecebimento = valorRecebimento;
         this.observacao = observacao;
         this.contaBancaria = contaBancaria;
-        this.lancamento = lancamentoId;
+        this.lancamento = lancamento;
     }
 
-    public Integer getId() {return id;}
-    public void setId(Integer id) {this.id = id;}
+    public Lancamento getLancamento() {
+        return lancamento;
+    }
 
-    public LocalDate getDataRecebimento() {return dataRecebimento;}
-    public void setDataRecebimento(LocalDate dataRecebimento) {this.dataRecebimento = dataRecebimento;}
+    public void setLancamento(Lancamento lancamento) {
+        this.lancamento = lancamento;
+    }
 
-    public BigDecimal getValorRecebimento() {return valorRecebimento;}
-    public void setValorRecebimento(BigDecimal valorRecebimento) {this.valorRecebimento = valorRecebimento;}
+    public ContaBancaria getContaBancaria() {
+        return contaBancaria;
+    }
 
-    public String getObservacao() {return observacao;}
-    public void setObservacao(String observacao) {this.observacao = observacao;}
+    public void setContaBancaria(ContaBancaria contaBancaria) {
+        this.contaBancaria = contaBancaria;
+    }
 
-    public ContaBancaria getContaBancaria() {return contaBancaria;}
-    public void setContaBancaria(ContaBancaria contaBancaria) {this.contaBancaria = contaBancaria;}
+    public String getObservacao() {
+        return observacao;
+    }
 
-    public Lancamento getLancamento() {return lancamento;}
-    public void setLancamento(Lancamento lancamento) {this.lancamento = lancamento;}
+    public void setObservacao(String observacao) {
+        this.observacao = observacao;
+    }
+
+    public BigDecimal getValorRecebimento() {
+        return valorRecebimento;
+    }
+
+    public void setValorRecebimento(BigDecimal valorRecebimento) {
+        this.valorRecebimento = valorRecebimento;
+    }
+
+    public LocalDate getDataRecebimento() {
+        return dataRecebimento;
+    }
+
+    public void setDataRecebimento(LocalDate dataRecebimento) {
+        this.dataRecebimento = dataRecebimento;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -84,6 +115,6 @@ public class Recebimento {
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return Objects.hashCode(id);
     }
 }

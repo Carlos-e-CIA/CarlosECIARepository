@@ -1,19 +1,19 @@
 package com.projetofef.domains;
 
+import com.projetofef.domains.enums.MeioPagamento;
+import com.projetofef.infra.MeioPagamentoConverter;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import com.projetofef.domains.ContaBancaria;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
-@Table(name = "pagamento")
+@Table
 @SequenceGenerator(
         name = "seq_pagamento",
         sequenceName = "seq_pagamento",
@@ -27,39 +27,43 @@ public class Pagamento {
 
     @JsonFormat(pattern = "dd/MM/yyyy")
     @Column(nullable = false)
-    @NotNull(message = "A data do pagamento é obrigatória")
-    private LocalDate dataPagamento;
+    private LocalDate dataPagamento = LocalDate.now();
 
-    @NotNull(message = "O valor pago é obrigatório")
-    @Positive(message = "O valor do pagamento deve ser maior que zero")
+    @NotNull
     @Digits(integer = 15, fraction = 2)
-    @Column(precision = 18, scale = 2, nullable = false)
+    @Column(precision = 17, scale = 2, nullable = false)
     private BigDecimal valorPago;
 
-    @NotBlank(message = "A observação é obrigatória")
-    @Column(name = "observacao", nullable = false, length = 100)
+    @NotBlank
+    @Column(nullable = false, length = 120)
     private String observacao;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "contaBancariaId", nullable = false)
-    @JsonBackReference
-    private ContaBancaria contaOrigem;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "lancamentoId", nullable = false)
+    @JoinColumn(name = "idLancamento", nullable = false)
     @JsonBackReference
     private Lancamento lancamento;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "idContaBancaria", nullable = false)
+    @JsonBackReference
+    private ContaBancaria contaBancaria;
+
+    @Convert(converter = MeioPagamentoConverter.class)
+    @Column(name = "meioPagamento", nullable = false)
+    private MeioPagamento meioPagamento;
+
     public Pagamento() {
+        this.valorPago = BigDecimal.ZERO;
     }
 
-    public Pagamento(Integer id, LocalDate dataPagamento, BigDecimal valorPago, String observacao, ContaBancaria contaOrigem, Lancamento lancamento) {
+    public Pagamento(Integer id, LocalDate dataPagamento, BigDecimal valorPago, String observacao, Lancamento lancamento, ContaBancaria contaBancaria, MeioPagamento meioPagamento) {
         this.id = id;
         this.dataPagamento = dataPagamento;
-        this.valorPago = valorPago;
+        this.valorPago = valorPago != null ? valorPago : BigDecimal.ZERO;
         this.observacao = observacao;
-        this.contaOrigem = contaOrigem;
         this.lancamento = lancamento;
+        this.contaBancaria = contaBancaria;
+        this.meioPagamento = meioPagamento;
     }
 
     public Integer getId() {
@@ -94,20 +98,28 @@ public class Pagamento {
         this.observacao = observacao;
     }
 
-    public ContaBancaria getContaBancaria() {
-        return contaOrigem;
-    }
-
-    public void setContaBancaria(ContaBancaria contaOrigem) {
-        this.contaOrigem = contaOrigem;
-    }
-
     public Lancamento getLancamento() {
         return lancamento;
     }
 
     public void setLancamento(Lancamento lancamento) {
         this.lancamento = lancamento;
+    }
+
+    public ContaBancaria getContaBancaria() {
+        return contaBancaria;
+    }
+
+    public void setContaBancaria(ContaBancaria contaBancaria) {
+        this.contaBancaria = contaBancaria;
+    }
+
+    public MeioPagamento getMeioPagamento() {
+        return meioPagamento;
+    }
+
+    public void setMeioPagamento(MeioPagamento meioPagamento) {
+        this.meioPagamento = meioPagamento;
     }
 
     @Override

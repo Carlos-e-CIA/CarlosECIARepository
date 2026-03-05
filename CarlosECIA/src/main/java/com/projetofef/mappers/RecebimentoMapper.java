@@ -1,8 +1,8 @@
 package com.projetofef.mappers;
 
-import com.projetofef.domains.Recebimento;
-import com.projetofef.domains.ContaBancaria;
 import com.projetofef.domains.Lancamento;
+import com.projetofef.domains.ContaBancaria;
+import com.projetofef.domains.Recebimento;
 import com.projetofef.domains.dtos.RecebimentoDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -12,95 +12,75 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static org.aspectj.asm.internal.ProgramElement.trim;
+public class RecebimentoMapper {
+    private  RecebimentoMapper() {}
 
-public final class RecebimentoMapper {
-    private RecebimentoMapper() {}
+    public static RecebimentoDTO toDto(Recebimento r) {
+        if(r == null) return null;
 
-    public static RecebimentoDTO toDto(Recebimento e) {
-        if (e == null) return null;
-        Integer lancamentoId = (e.getLancamento() == null) ? null : e.getLancamento().getId();
-        Integer contaBancariaId = (e.getContaBancaria() == null) ? null : e.getContaBancaria().getId();
+        Integer idDto = r.getId();
+        Integer lancamentoId = (r.getLancamento() == null) ? null : r.getLancamento().getId();
+        Integer contaBancariaId = (r.getContaBancaria() == null) ? null : r.getContaBancaria().getId();
 
         return new RecebimentoDTO(
-                e.getId(),
+                idDto,
+                r.getValorRecebimento(),
+                r.getObservacao(),
                 lancamentoId,
-                e.getDataRecebimento(),
-                e.getValorRecebimento(),
-                contaBancariaId,
-                e.getObservacao()
+                contaBancariaId
         );
     }
-    public static List<RecebimentoDTO> toDtoList(Collection<Recebimento> list) {
-        if (list == null) return List.of();
-        return list.stream()
+
+    public static List<RecebimentoDTO> toDtoList(Collection<Recebimento> entities) {
+        if(entities == null) return List.of();
+        return entities.stream()
                 .filter(Objects::nonNull)
                 .map(RecebimentoMapper::toDto)
                 .collect(Collectors.toList());
     }
+
     public static Page<RecebimentoDTO> toDtoPage(Page<Recebimento> page) {
         List<RecebimentoDTO> content = toDtoList(page.getContent());
         return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
     }
+
     public static Recebimento toEntity(RecebimentoDTO dto, Lancamento lancamento, ContaBancaria contaBancaria) {
-        if (dto == null) return null;
+        if(dto == null) return null;
 
-        Recebimento e = new Recebimento();
+        Recebimento r = new Recebimento();
 
-        e.setId(dto.getId());
-        e.setLancamento(lancamento);
-        e.setValorRecebimento(dto.getValorRecebido());
-        e.setContaBancaria(contaBancaria);
-        e.setObservacao(trim(dto.getObservacao()));
+        r.setId(dto.getId());
+        r.setValorRecebimento(dto.getValorRecebido());
+        r.setObservacao(trim(dto.getObservacao()));
+        r.setLancamento(lancamento);
+        r.setContaBancaria(contaBancaria);
 
-        return e;
+        return r;
     }
-    public static Recebimento toEntity(
-            RecebimentoDTO dto,
-            Function<Integer, Lancamento> lancamentoResolver,
-            Function<Integer, ContaBancaria> contaBancariaResolver
-    )
-    {if (dto == null) return null;
 
-        Lancamento lancamento = (dto.getLancamentoId() == null) ? null
-                : lancamentoResolver.apply(dto.getLancamentoId());
-
-        ContaBancaria contaBancaria = (dto.getContaBancariaId() == null) ? null
-                : contaBancariaResolver.apply(dto.getContaBancariaId());
-
+    public static Recebimento toEntity(RecebimentoDTO dto, Function<Integer, Lancamento> lancamnetoResolver, Function<Integer, ContaBancaria> contaBancariaResolver) {
+        if(dto == null) return null;
+        Lancamento lancamento = (dto.getLancamentoId() == null) ? null : lancamnetoResolver.apply(dto.getLancamentoId());
+        ContaBancaria contaBancaria = (dto.getContaBancariaId() == null) ? null : contaBancariaResolver.apply(dto.getContaBancariaId());
         return toEntity(dto, lancamento, contaBancaria);
     }
-    public static void copyToEntity(
-            RecebimentoDTO dto,
-            Recebimento target,
-            Lancamento lancamento,
-            ContaBancaria contaBancaria
-    )
-    {
-        if (dto == null || target == null) return;
 
-        target.setLancamento(lancamento);
+    public static void copyToEntity(RecebimentoDTO dto, Recebimento target, Lancamento lancamento, ContaBancaria contaBancaria) {
+        if(dto == null || target == null) return;
+
         target.setValorRecebimento(dto.getValorRecebido());
+        target.setObservacao(dto.getObservacao());
+        target.setLancamento(lancamento);
         target.setContaBancaria(contaBancaria);
-        target.setObservacao(trim(dto.getObservacao()));
     }
-    public static void copyToEntity(
-            RecebimentoDTO dto,
-            Recebimento target,
-            Function<Integer, Lancamento> lancamentoResolver,
-            Function<Integer, ContaBancaria> contaBancariaResolver
-    )
-    {
-        if (dto == null || target == null) return;
 
-        Lancamento lancamento = (dto.getLancamentoId() == null) ? null
-                : lancamentoResolver.apply(dto.getLancamentoId());
-
-        ContaBancaria contaBancaria = (dto.getContaBancariaId() == null) ? null
-                : contaBancariaResolver.apply(dto.getContaBancariaId());
-
+    public static void copyToEntity(RecebimentoDTO dto, Recebimento target, Function <Integer, Lancamento> lancamentoResolver, Function<Integer, ContaBancaria> contaBancariaResolver) {
+        if(dto == null || target == null) return;
+        Lancamento lancamento = (dto.getLancamentoId() == null) ? null : lancamentoResolver.apply(dto.getLancamentoId());
+        ContaBancaria contaBancaria = (dto.getContaBancariaId() == null) ? null : contaBancariaResolver.apply(dto.getContaBancariaId());
         copyToEntity(dto, target, lancamento, contaBancaria);
     }
+
     private static String trim(String s) {
         return (s == null) ? null : s.trim();
     }

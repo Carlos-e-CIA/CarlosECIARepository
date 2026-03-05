@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name="contaBancaria")
+@Table
 @SequenceGenerator(
         name = "seq_contaBancaria",
         sequenceName = "seq_contaBancaria",
@@ -26,7 +26,7 @@ public class ContaBancaria {
     private Integer id;
 
     @NotBlank
-    @Column(nullable = false, length = 60)
+    @Column(nullable = false, length = 120)
     private String instituicao;
 
     @NotBlank
@@ -34,11 +34,11 @@ public class ContaBancaria {
     private String agencia;
 
     @NotNull
-    @Column(nullable = false, length = 13)
+    @Column(nullable = false, length = 29, unique = true)
     private Integer numero;
 
     @NotBlank
-    @Column(nullable = false, length = 60)
+    @Column(nullable = false, length = 120)
     private String apelido;
 
     @NotNull
@@ -50,21 +50,12 @@ public class ContaBancaria {
     @Column(nullable = false)
     private LocalDate dataSaldoInicial = LocalDate.now();
 
-    @NotBlank
-    private char ativa;
-
-    @JsonManagedReference
-    @OneToMany(
-            mappedBy = "contaBancaria",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
-            orphanRemoval = false,
-            fetch = FetchType.LAZY
-    )
-    @OrderBy("historico ASC")
-    private List<MovimentoConta> movimentoContas = new ArrayList<>();
+    @NotNull
+    @Column(nullable = false, length = 1)
+    private Character ativa;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "idusuario", nullable = false)
+    @JoinColumn(name = "idUsuario", nullable = false)
     @JsonBackReference
     private Usuario usuario;
 
@@ -75,17 +66,7 @@ public class ContaBancaria {
             orphanRemoval = false,
             fetch = FetchType.LAZY
     )
-    @OrderBy("descricao ASC")
-    private List<Lancamento> lancamentos = new ArrayList<>();
-
-    @JsonManagedReference
-    @OneToMany(
-            mappedBy = "contaBancaria",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
-            orphanRemoval = false,
-            fetch = FetchType.LAZY
-    )
-    @OrderBy("observacao ASC")
+    @OrderBy("dataPagamento ASC")
     private List<Pagamento> pagamentos = new ArrayList<>();
 
     @JsonManagedReference
@@ -98,10 +79,51 @@ public class ContaBancaria {
     @OrderBy("observacao ASC")
     private List<Recebimento> recebimentos = new ArrayList<>();
 
+    @JsonManagedReference
+    @OneToMany(
+            mappedBy = "contaBancaria",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            orphanRemoval = false,
+            fetch = FetchType.LAZY
+    )
+    @OrderBy("data ASC")
+    private List<Transferencia> transferencias = new ArrayList<>();
+
+    @JsonManagedReference
+    @OneToMany(
+            mappedBy = "contaBancaria",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            orphanRemoval = false,
+            fetch = FetchType.LAZY
+    )
+    @OrderBy("historico ASC")
+    private List<MovimentoConta> movimentoContas = new ArrayList<>();
+
+    @JsonManagedReference
+    @OneToMany(
+            mappedBy = "contaBancaria",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            orphanRemoval = false,
+            fetch = FetchType.LAZY
+    )
+    @OrderBy("dataCompetencia ASC")
+    private List<Lancamento> lancamentos = new ArrayList<>();
+
+    @JsonManagedReference
+    @OneToMany(
+            mappedBy = "contaBancaria",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            orphanRemoval = false,
+            fetch = FetchType.LAZY
+    )
+    @OrderBy("codigo ASC")
+    private List<Investimento> investimentos = new ArrayList<>();
+
     public ContaBancaria() {
+        this.saldoInicial = BigDecimal.ZERO;
     }
 
-    public ContaBancaria(Integer id, String instituicao, String agencia, Integer numero, String apelido, BigDecimal saldoInicial, LocalDate dataSaldoInicial, char ativa, Usuario usuario) {
+    public ContaBancaria(Integer id, String instituicao, String agencia, Integer numero, String apelido, BigDecimal saldoInicial, LocalDate dataSaldoInicial, Character ativa, Usuario usuario) {
         this.id = id;
         this.instituicao = instituicao;
         this.agencia = agencia;
@@ -169,11 +191,11 @@ public class ContaBancaria {
         this.dataSaldoInicial = dataSaldoInicial;
     }
 
-    public char getAtiva() {
+    public Character getAtiva() {
         return ativa;
     }
 
-    public void setAtiva(char ativa) {
+    public void setAtiva(Character ativa) {
         this.ativa = ativa;
     }
 
@@ -183,6 +205,54 @@ public class ContaBancaria {
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
+    }
+
+    public void setPagamentos(List<Pagamento> pagamentos) {
+        this.pagamentos = pagamentos;
+    }
+
+    public void addPagamento(Pagamento pa) {
+        if(pagamentos == null) return;
+        pagamentos.add(pa);
+        pa.setContaBancaria(this);
+    }
+
+    public void removePagamento(Pagamento pa) {
+        if(pagamentos == null) return;
+        pagamentos.remove(pa);
+        if(pa.getContaBancaria() == this) pa.setContaBancaria(null);
+    }
+
+    public void setRecebimentos(List<Recebimento> recebimentos) {
+        this.recebimentos = recebimentos;
+    }
+
+    public void addRecebimento(Recebimento re) {
+        if(recebimentos == null) return;
+        recebimentos.add(re);
+        re.setContaBancaria(this);
+    }
+
+    public void removeRecebimento(Recebimento re) {
+        if(recebimentos == null) return;
+        recebimentos.remove(re);
+        if(re.getContaBancaria() == this) re.setContaBancaria(null);
+    }
+
+    public void setTransferencias(List<Transferencia> transferencias) {
+        this.transferencias = transferencias;
+    }
+
+    public void addTransferencia(Transferencia tr) {
+        if(transferencias == null) return;
+        transferencias.add(tr);
+        tr.setContaBancaria(this);
+    }
+
+    public void removeTransferencia(Transferencia tr) {
+        if(transferencias == null) return;
+        transferencias.remove(tr);
+        if(tr.getContaBancaria() == this) tr.setContaBancaria(null);
     }
 
     public void setMovimentoContas(List<MovimentoConta> movimentoContas) {
@@ -217,36 +287,20 @@ public class ContaBancaria {
         if(la.getContaBancaria() == this) la.setContaBancaria(null);
     }
 
-    public void setPagamentos(List<Pagamento> pagamentos) {
-        this.pagamentos = pagamentos;
+    public void setInvestimentos(List<Investimento> investimentos) {
+        this.investimentos = investimentos;
     }
 
-    public void addPagamento(Pagamento pa) {
-        if(pagamentos == null) return;
-        pagamentos.add(pa);
-        pa.setContaBancaria(this);
+    public void addInvestimento(Investimento in) {
+        if(investimentos == null) return;
+        investimentos.add(in);
+        in.setContaBancaria(this);
     }
 
-    public void removePagamento(Pagamento pa) {
-        if(pagamentos == null) return;
-        pagamentos.remove(pa);
-        if(pa.getContaBancaria() == this) pa.setContaBancaria(null);
-    }
-
-    public void setRecebimentos(List<Recebimento> recebimentos) {
-        this.recebimentos = recebimentos;
-    }
-
-    public void addRecebimento(Recebimento re) {
-        if(recebimentos == null) return;
-        recebimentos.add(re);
-        re.setContaBancaria(this);
-    }
-
-    public void removeRecebimento(Recebimento re) {
-        if(recebimentos == null) return;
-        recebimentos.remove(re);
-        if(re.getContaBancaria() == this) re.setContaBancaria(null);
+    public void removeInvestimento(Investimento in) {
+        if(investimentos == null) return;
+        investimentos.remove(in);
+        if(in.getContaBancaria() == this) in.setContaBancaria(null);
     }
 
     @Override

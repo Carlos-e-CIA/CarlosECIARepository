@@ -12,7 +12,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public final class ContaBancariaMapper {
-    private ContaBancariaMapper() {}
+    private  ContaBancariaMapper() {}
 
     public static ContaBancariaDTO toDto(ContaBancaria co) {
         if(co == null) return null;
@@ -26,8 +26,8 @@ public final class ContaBancariaMapper {
                 co.getAgencia(),
                 co.getNumero(),
                 co.getApelido(),
-                co.saldoInicial(),
-                co.ativa(),
+                co.getSaldoInicial(),
+                co.getAtiva(),
                 usuarioId
         );
     }
